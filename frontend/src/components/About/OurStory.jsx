@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { Calendar, Target, Heart, Zap, ChevronRight, Users } from 'lucide-react'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
-
+import imagestory from '../../assets/About/storyimg.jpeg'
 // Brand color mapping
 const colorMap = {
   gold: {
@@ -39,7 +39,7 @@ function SectionTitle ({ title, subtitle }) {
 const timeline = [
   {
     year: '1987',
-    title: 'NY Zoo Opens',
+    title: 'My Zoo Opens',
     text: 'Founded with 40 species and a bold vision for urban conservation.',
     icon: <Heart className='w-6 h-6' />,
     color: 'green'
@@ -158,10 +158,12 @@ function OurStory () {
           {/* Background Image */}
           <div
             className='absolute inset-0 bg-cover bg-center h-screen'
-            style={{
-              backgroundImage:
-                "url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBobenVgW1aqhB8_Ck1NcozmaEJ-009Pe7Dg&s')"
-            }}
+           style={{
+                       background:
+                       `url(${imagestory})`,
+                       backgroundSize: "cover",
+                       backgroundPosition: "center",
+                     }}
           />
 
           {/* Dark overlay */}

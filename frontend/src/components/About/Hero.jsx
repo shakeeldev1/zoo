@@ -162,15 +162,7 @@ export default function HeroSection () {
             <Heart className='w-5 h-5' /> Adopt an Animal
           </Link>
 
-          <Link to="/services"
           
-            className='inline-flex items-center justify-center gap-2 rounded-xl 
-                       bg-white border border-slate-200 hover:bg-slate-100 px-6 py-3 sm:px-7 sm:py-4 
-                       font-medium text-slate-900 shadow-lg hover:shadow-[0_0_15px_rgba(0,0,0,0.2)] 
-                       transform hover:scale-105 transition-all duration-300'
-          >
-            Learn More <ArrowRight className='w-5 h-5' />
-          </Link>
         </div>
       </div>
     </header>

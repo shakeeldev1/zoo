@@ -7,7 +7,7 @@ import "aos/dist/aos.css";
 import { Link } from "react-router-dom";
 import Model from "../common/Model";
 import { useState } from "react";
-
+import missionimg from '../../assets/About/lion.jpeg'
 function MissionVision() {
   useEffect(() => {
     AOS.init({
@@ -268,8 +268,8 @@ function MissionVision() {
           data-aos-delay="200"
           className="mt-16 rounded-2xl p-10 text-center text-white relative overflow-hidden group"
           style={{
-            backgroundImage:
-              "url('https://images.pexels.com/photos/247502/pexels-photo-247502.jpeg?auto=compress&cs=tinysrgb&w=1600')",
+            background:
+            `url(${missionimg})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}

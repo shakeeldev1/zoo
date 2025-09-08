@@ -3,7 +3,14 @@ import { motion } from 'framer-motion'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
 import { Heart, MapPin, Utensils, AlertCircle } from 'lucide-react'
-
+import animal1 from '../../assets/About/animal1.jpeg'
+import animal2 from '../../assets/About/animal2.jpeg'
+import animal3 from '../../assets/About/animal3.jpeg'
+import animal4 from '../../assets/About/animal4.jpg'
+import animal5 from '../../assets/About/animal5.jpeg'
+import animal6 from '../../assets/About/animal6.jpeg'
+import animal7 from '../../assets/About/animal7.jpeg'
+import animal8 from '../../assets/About/animal8.jpeg'
 // Section title component
 function SectionTitle ({ title, subtitle }) {
   return (
@@ -50,7 +57,7 @@ function MeetAnimals () {
   const animals = [
     {
       name: 'African Lion',
-      img: 'https://images.pexels.com/photos/29016100/pexels-photo-29016100.jpeg',
+      img:animal1,
       habitat: 'Savannahs and grasslands',
       diet: 'Carnivore',
       status: 'Vulnerable',
@@ -59,7 +66,7 @@ function MeetAnimals () {
     },
     {
       name: 'Asian Elephant',
-      img: 'https://images.pexels.com/photos/31730947/pexels-photo-31730947.jpeg',
+      img: animal2,
       habitat: 'Forests and grasslands',
       diet: 'Herbivore',
       status: 'Endangered',
@@ -68,7 +75,7 @@ function MeetAnimals () {
     },
     {
       name: 'Macaw Parrot',
-      img: 'https://images.pexels.com/photos/1316294/pexels-photo-1316294.jpeg',
+      img: animal3,
       habitat: 'Rainforests',
       diet: 'Omnivore',
       status: 'Least Concern',
@@ -77,7 +84,7 @@ function MeetAnimals () {
     },
     {
       name: 'Gentoo Penguin',
-      img: 'https://images.pexels.com/photos/20414000/pexels-photo-20414000.jpeg',
+      img: animal4,
       habitat: 'Antarctic regions',
       diet: 'Carnivore',
       status: 'Near Threatened',
@@ -86,7 +93,7 @@ function MeetAnimals () {
     },
     {
       name: 'Giant Panda',
-      img: 'https://images.pexels.com/photos/23910288/pexels-photo-23910288.jpeg',
+      img: animal5,
       habitat: 'Temperate forests in China',
       diet: 'Herbivore (mainly bamboo)',
       status: 'Vulnerable',
@@ -95,7 +102,7 @@ function MeetAnimals () {
     },
     {
       name: 'Komodo Dragon',
-      img: 'https://images.pexels.com/photos/4011962/pexels-photo-4011962.jpeg',
+      img: animal6,
       habitat: 'Indonesian islands',
       diet: 'Carnivore',
       status: 'Endangered',
@@ -104,7 +111,7 @@ function MeetAnimals () {
     },
     {
       name: 'Blue Whale',
-      img: 'https://images.pexels.com/photos/32228839/pexels-photo-32228839.jpeg',
+      img: animal7,
       habitat: 'Oceans worldwide',
       diet: 'Carnivore (krill)',
       status: 'Endangered',
@@ -112,8 +119,8 @@ function MeetAnimals () {
         'The largest animal ever known to have lived on Earth, reaching up to 30 meters in length.'
     },
     {
-      name: 'Red Kangaroo',
-      img: 'https://images.pexels.com/photos/6394755/pexels-photo-6394755.jpeg',
+      name: 'Rabit',
+      img: animal8,
       habitat: 'Australian deserts and grasslands',
       diet: 'Herbivore',
       status: 'Least Concern',
