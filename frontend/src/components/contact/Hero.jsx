@@ -81,7 +81,7 @@ export default function Hero() {
           data-aos="zoom-in-down"
           data-aos-delay="200"
         >
-          Discover exotic animals, learn about conservation, and experiencess the
+          Discover exotic animals, learn about conservation, and experience the
           beauty of wildlife up close.{" "}
           <span className="font-semibold text-[#95D5B2] bg-gradient-to-r from-[#2D6A4F]/30 to-[#1B4332]/10 px-2 py-1 rounded-md inline-flex items-center">
             Adventure awaits you!
@@ -116,7 +116,7 @@ export default function Hero() {
             <div className="absolute inset-0 bg-white/5 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             <span className="relative z-10 whitespace-nowrap flex items-center">
               <FaCalendarAlt className="mr-2 sm:mr-3 transform group-hover:scale-110 transition-transform duration-300" />
-              Plan Your Visit
+              Plan Your Visits
             </span>
             <FaArrowRight className="ml-2 sm:ml-3 relative z-10 transform -translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300" />
           </button>
