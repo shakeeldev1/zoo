@@ -148,7 +148,7 @@ function MeetAnimals () {
   }
 
   return (
-    <div className='min-h-screen bg-gradient-to-b from-white to-slate-100 pb-16'>
+    <div className='min-h-screen bg-gradient-to-b from-white to-slate-100 '>
       <section className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16'>
         <SectionTitle
           title='Meet Our Animals'
@@ -169,7 +169,7 @@ function MeetAnimals () {
               data-aos='zoom-in'
               data-aos-delay={i * 100}
             >
-              <div className='aspect-[4/3] sm:aspect-square overflow-hidden relative'>
+              <div className='aspect-[4/3]  overflow-hidden relative'>
                 <img
                   src={animal.img}
                   alt={`Photo of ${animal.name}`}

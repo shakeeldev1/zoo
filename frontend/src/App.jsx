@@ -17,6 +17,7 @@ import SideBaar from './components/dashboard/common/SideBaar'
 import Overview from './pages/dashboard/Overview'
 import Users from './pages/dashboard/Users'
 import VisitSchools from './components/home/VisitSchools'
+import ScrollToTop from './components/common/ScrollToTop'
 
 const MainFunction = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -26,6 +27,7 @@ const MainFunction = () => {
 
   return (
     <div>
+      <ScrollToTop/>
       <Navbar openCart={openCart} />   {/* pass openCart function */}
       <Outlet />
       <Footer />

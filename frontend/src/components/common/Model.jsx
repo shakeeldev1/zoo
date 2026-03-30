@@ -8,13 +8,13 @@ const Model = ({isOpen,onClose}) => {
     if(!isOpen) return
       
   return (
-    <div>
+    <div className=''>
       {/* Tickets Modal */}
     
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div
             data-aos="zoom-in"
-            className="bg-white w-full max-w-xl rounded-2xl shadow-2xl p-8 relative animate-fadeIn"
+            className="bg-white w-full md:w-[50%] rounded-2xl shadow-2xl p-3 relative animate-fadeIn"
           >
             {/* Close */}
             <button
@@ -25,20 +25,20 @@ const Model = ({isOpen,onClose}) => {
             </button>
 
             {/* Header */}
-            <div className="flex flex-col items-center text-center mb-8">
+            <div className="flex flex-col items-center text-center mb-2">
               <div className="flex items-center justify-center w-14 h-14 rounded-full bg-[#2D6A4F]/100 hover:bg-yellow-400 shadow-md mb-3">
                 <FaPaw className="text-white text-2xl" />
               </div>
-              <h2 className="text-3xl font-extrabold text-green-800">
+              <h2 className="text-xl md:text-3xl font-extrabold text-green-800">
                 Book Your Tickets
               </h2>
-              <p className="text-gray-600 mt-2 text-sm">
+              <p className="text-gray-600 md:mt-2 text-sm">
                 Experience a day full of adventure and wildlife at City Zoo
               </p>
             </div>
 
             {/* Form */}
-            <form className="space-y-6">
+            <form className="md:space-y-6">
               <div>
                 <label className="block text-green-900 font-semibold mb-2">
                   Full Name

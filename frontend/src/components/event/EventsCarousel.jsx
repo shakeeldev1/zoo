@@ -52,7 +52,7 @@ export default function EventsCarousel() {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <div className="w-full">
+        <div className="w-full mb-4">
             <Swiper
                 modules={[Autoplay, Pagination, Scrollbar, A11y]}
                 spaceBetween={20}
@@ -68,7 +68,7 @@ export default function EventsCarousel() {
             >
                 {events.map((event) => (
                     <SwiperSlide key={event.id}>
-                        <div className="relative h-[400px] sm:h-[500px] md:h-[600px] lg:h-[730px]">
+                        <div className="relative h-[400px] md:h-[600px] ">
                             <img
                                 src={event.image}
                                 alt="Event"

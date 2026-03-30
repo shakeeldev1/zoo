@@ -99,7 +99,7 @@ export default function EventsCards() {
       desc: "Tour the on-site museum at Al Khor Park to learn about local wildlife, conservation efforts, and the region’s ecosystem.",
       date: "Oct 15, 2025",
       category: "Carnivals",
-      image: museum,
+      image: '/eventpic/tour.jpeg',
     },
     {
       id: 8,
@@ -148,7 +148,12 @@ export default function EventsCards() {
   return (
     <div className="w-full bg-gradient-to-b from-emerald-50 to-white min-h-screen pb-16">
       {/* 🎨 Upcoming Event Banner */}
-      <div className="relative w-full h-[400px] sm:h-[500px] bg-gradient-to-br from-green-900 via-[#026b02] to-[#fdc600de] overflow-hidden flex flex-col justify-center items-center text-center text-white px-3 sm:px-4 shadow-lg">
+      <div className="relative w-full h-[400px] sm:h-[500px] bg-gradient-to-br from-green-900 via-[#026b02] to-[#fdc600de] overflow-hidden flex flex-col justify-center items-center text-center text-white px-3 sm:px-4 shadow-lg"
+        style={{
+          'background': 'linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.2)), url(/eventpic/event.jpeg)', // Adds a 40% black overlay
+          'backgroundSize': 'cover',
+          'backgroundPosition': 'center', // Added for better image positioning
+        }}>
         <div className="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgdmlld0JveD0iMCAwIDYwIDYwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMC41IiBzdHJva2Utb3BhY2l0eT0iMC4zIj48cGF0aCBkPSJNMzAgMTVjLTguMjg0IDAtMTUgNi43MTYtMTUgMTVzNi43MTYgMTUgMTUgMTUgMTUtNi43MTYgMTUtMTUtNi43MTYtMTUtMTUtMTV6Ii8+PHBhdGggZD0iTTMwIDIwYy01LjUyMyAwLTEwIDQuNDc3LTEwIDEwczQuNDc3IDEwIDEwIDEwIDEwLTQuNDc3IDEwLTEwLTQuNDc3LTEwLTEwLTEweiIvPjxjaXJjbGUgY3g9IjMwIiBjeT0iMzAiIHI9IjUiLz48L2c+PC9zdmc+')]"></div>
 
         <div className="relative z-10 max-w-4xl mx-auto px-2 sm:px-4">
@@ -170,7 +175,7 @@ export default function EventsCards() {
             ))}
           </div>
 
-          <button onClick={()=>setIsOpen(true)} className="bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-emerald-900 px-5 sm:px-8 py-2 sm:py-3 rounded-full text-sm sm:text-lg font-bold transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl" data-aos="zoom-out">
+          <button onClick={() => setIsOpen(true)} className="bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-emerald-900 px-5 sm:px-8 py-2 sm:py-3 rounded-full text-sm sm:text-lg font-bold transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl" data-aos="zoom-out">
             Get Tickets Now
           </button>
         </div>

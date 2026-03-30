@@ -42,14 +42,14 @@ function Visits() {
     },
     {
       id: 5,
-      img: visit5,
+      img: visit6,
       title: "Outdoor Nature Exploration",
       subtitle: "Learning beyond classrooms in natural environment",
       badge: "Nature Visit"
     },
     {
       id: 6,
-      img: visit6,
+      img: visit5,
       title: "Wildlife Awareness Program",
       subtitle: "Understanding conservation and ecosystem",
       badge: "Awareness"

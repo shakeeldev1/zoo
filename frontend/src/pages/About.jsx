@@ -3,6 +3,7 @@ import Hero from '../components/About/Hero'
 import MissionVision from '../components/About/MissionVision'
 import OurStory from '../components/About/OurStory'
 import MeetAnimals from '../components/About/MeetAnimal'
+import Certification from '../components/About/Certification'
 
 function About() {
   return (
@@ -11,6 +12,7 @@ function About() {
       <Hero/>
       <MissionVision/>
       <OurStory/>
+      <Certification/>
       <MeetAnimals/>
       
     </div>

@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { FaPaw, FaFacebookF, FaTwitter, FaInstagram, FaLinkedin, FaMapMarkerAlt, FaPhoneAlt, FaEnvelope } from "react-icons/fa";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   useEffect(() => {
@@ -12,11 +13,17 @@ const Footer = () => {
     });
   }, []);
 
+  const quicklink = [
+    { name: 'Home', link: '/' },
+    { name: 'About', link: '/about' },
+    { name: 'Services', link: '/services' },
+    { name: 'Events', link: '/events' }
+  ];
   return (
     <footer className="bg-gradient-to-r from-green-800 to-emerald-800 text-white overflow-hidden">
       {/* Decorative elements */}
       <div className="absolute left-0 right-0 top-0 h-1 bg-gradient-to-r from-transparent via-yellow-400 to-transparent opacity-30"></div>
-      
+
       {/* Main Footer Content */}
       <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative">
         {/* Animated paw prints decoration */}
@@ -26,9 +33,9 @@ const Footer = () => {
         <div className="absolute -bottom-4 -right-4 opacity-10" data-aos="fade-left">
           <FaPaw className="h-16 w-16 text-yellow-400 transform -rotate-45" />
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 relative z-10">
-          
+
           {/* Brand Column */}
           <div className="lg:col-span-1" data-aos="fade-up" data-aos-delay="100">
             <div className="flex items-center mb-6 transform hover:scale-105 transition-transform duration-300">
@@ -49,12 +56,12 @@ const Footer = () => {
                 { icon: <FaInstagram size={16} />, color: "hover:bg-pink-600" },
                 { icon: <FaLinkedin size={16} />, color: "hover:bg-blue-700" }
               ].map((social, index) => (
-                <a 
+                <a
                   key={index}
-                  href="#" 
+                  href="#"
                   className="bg-green-600 p-3 rounded-full transition-all duration-300 text-white transform hover:-translate-y-1 shadow-md hover:shadow-lg flex items-center justify-center 
                   group overflow-hidden relative"
-                  data-aos="zoom-in" 
+                  data-aos="zoom-in"
                   data-aos-delay={200 + (index * 100)}
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-emerald-500 to-green-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -72,15 +79,15 @@ const Footer = () => {
               Quick Links
             </h4>
             <ul className="space-y-3">
-              {['Home', 'About', 'Services', 'Events'].map((item, index) => (
+              {quicklink.map((item, index) => (
                 <li key={index}>
-                  <a 
-                    href="#" 
+                  <Link
+                    to={item.link}
                     className="text-green-100 hover:text-white transition-all duration-300 flex items-center group"
                   >
                     <span className="w-2 h-2 bg-yellow-400 rounded-full mr-3 transform scale-0 group-hover:scale-100 transition-transform duration-300"></span>
-                    <span className="group-hover:translate-x-2 transition-transform duration-300">{item}</span>
-                  </a>
+                    <span className="group-hover:translate-x-2 transition-transform duration-300">{item.name}</span>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -94,8 +101,8 @@ const Footer = () => {
             <ul className="space-y-3">
               {['FAQ', 'Blog & News', 'Volunteer', 'Support Center'].map((item, index) => (
                 <li key={index}>
-                  <a 
-                    href="#" 
+                  <a
+                    href="#"
                     className="text-green-100 hover:text-white transition-all duration-300 flex items-center group"
                   >
                     <span className="w-2 h-2 bg-yellow-400 rounded-full mr-3 transform scale-0 group-hover:scale-100 transition-transform duration-300"></span>
@@ -144,9 +151,9 @@ const Footer = () => {
           </p>
           <div className="flex space-x-6" data-aos="">
             {['Privacy Policy', 'Terms of Service', 'Cookie Policy'].map((item, index) => (
-              <a 
+              <a
                 key={index}
-                href="#" 
+                href="#"
                 className="text-green-100 hover:text-white text-sm transition-all duration-300 relative after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-0 after:bg-yellow-400 after:transition-all after:duration-300 hover:after:w-full"
               >
                 {item}

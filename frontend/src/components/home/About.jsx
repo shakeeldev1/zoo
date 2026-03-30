@@ -5,12 +5,12 @@ import ostrich from "../../assets/commonimages/ostrich.jpeg" // Image of an ostr
 import { Link } from 'react-router-dom'
 const AboutZoo = () => {
   return (
-    <div className='w-full mx-auto py-16 px-6 md:px-10 lg:px-14 lg:py-16 box-border relative'>
+    <div className='w-full mx-auto py-10 px-6 md:px-10 lg:px-14 box-border relative'>
       {/* Section Title */}
 <div className='text-center lg:text-left'>
   <span
-        className='inline-block text-lg font-semibold tracking-wider 
-  text-green-800 uppercase bg-green-100 px-4 py-2 rounded-full  mb-3 md:mb-4
+        className='inline-block text-4xl font-extrabold tracking-wider 
+  text-green-800 uppercase bg-gradient-to-r from-green-900 to-[#fdc500] bg-clip-text text-transparent px-4 py-2 rounded-full  md:mb-4
   shadow-inner'
       >
         Welcome to City Zoo

@@ -13,15 +13,15 @@ export default function SignupForm() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center px-4 sm:px-8 md:px-12 lg:px-16 py-32 bg-green-700"
+      className="min-h-screen flex items-center justify-center px-4 sm:px-8 md:px-12 lg:px-16 py-22 "
     >
       {/* Card */}
-      <div className="w-full max-w-3xl bg-white shadow-xl rounded-lg overflow-hidden border border-gray-900">
+      <div className="w-full max-w-xl bg-white shadow-xl rounded-lg overflow-hidden border border-gray-900">
         
         {/* Header */}
         <div className="bg-green-100 py-6 px-4 sm:px-8 text-center">
           <h1
-            className="text-gray-900 font-serif text-2xl sm:text-3xl font-bold"
+            className="text-gray-900 font- text-2xl sm:text-3xl font-bold"
             data-aos="zoom-out-up"
           >
             Create Hope Today

@@ -50,6 +50,10 @@ export default function HeroSection () {
                  bg-gradient-to-br from-green-900 via-green-800 to-[#fdc500] 
                  py-14 sm:py-20 md:py-28 top-[40px]'
       aria-label='Hero section for Wildlife Sanctuary'
+      style={{
+        'background':'linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.2)),url(/about/enjoy.jpeg)',
+        'background-size':'cover',
+      }}
     >
       {/* Background blobs */}
       <div className='absolute inset-0 opacity-25'>
