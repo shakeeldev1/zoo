@@ -16,6 +16,7 @@ import Navbarr from './components/dashboard/common/Navbar'
 import SideBaar from './components/dashboard/common/SideBaar'
 import Overview from './pages/dashboard/Overview'
 import Users from './pages/dashboard/Users'
+import VisitSchools from './components/home/VisitSchools'
 
 const MainFunction = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -48,6 +49,7 @@ const router = createBrowserRouter([
     element: <MainFunction />,
     children: [{ path: '/', element: <Home /> },
     { path: '/about', element: <About /> },
+    { path: '/visitschool', element: <VisitSchools /> },
     { path: "/services", element: <Services /> },
     { path: "/login", element: <LoginForm /> },
     { path: "/signup", element: <SignupForm /> },

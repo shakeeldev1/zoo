@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
-
+import oxe from '../../assets/commonimages/oxe (7).jpeg'
 const faqs = [
   {
     question: "What animals can I see at the zoo?",
@@ -90,7 +90,7 @@ const FAQSection = () => {
             data-aos="fade-left"
           >
             <img
-              src="./images/animals.png"
+              src={oxe}
               alt="Zoo Animals"
               className="w-full h-full object-cover transform hover:scale-110 transition duration-700 ease-in-out"
             />

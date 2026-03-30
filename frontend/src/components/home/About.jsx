@@ -1,6 +1,7 @@
 import React from 'react'
 import 'aos/dist/aos.css'
 import { FaLeaf } from 'react-icons/fa' // Leaf icon
+import ostrich from "../../assets/commonimages/ostrich.jpeg" // Image of an ostrich
 import { Link } from 'react-router-dom'
 const AboutZoo = () => {
   return (
@@ -26,8 +27,8 @@ const AboutZoo = () => {
         >
           <img
             className='w-full max-w-4xl rounded-2xl shadow-lg object-cover'
-            src='./images/zebra.jpg'
-            alt='Zoo'
+            src={ostrich}
+            alt='Ostrich'
           />
         </div>
 

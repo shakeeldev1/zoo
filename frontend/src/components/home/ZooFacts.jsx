@@ -1,6 +1,6 @@
 import React from "react";
 import { FaPaw, FaUsers, FaCertificate, FaShieldAlt } from "react-icons/fa";
-
+import sheeps from '../../assets/commonimages/sheeps.jpeg'
 const ZooFacts = () => {
   const stats = [
     { icon: <FaPaw className="text-[#2EB872] text-5xl mb-3 transition-all duration-500 group-hover:text-white" />, number: 12345, label: "Total Animals" },
@@ -14,7 +14,7 @@ const ZooFacts = () => {
       {/* Background with black overlay */}
       <div
         className="relative bg-cover bg-center bg-no-repeat py-16"
-        style={{ backgroundImage: "url('./images/bg-1.jpg')" }}
+        style={{ backgroundImage: `url(${sheeps})`}}
       >
         {/* Black Overlay */}
         <div className="absolute inset-0 bg-black/75"></div>

@@ -6,6 +6,7 @@ import ZooFacts from '../components/home/ZooFacts'
 import ZooGallery from '../components/home/Gallery'
 import TestimonialSwiper from '../components/home/Testimonial'
 import FAQSection from '../components/home/FAQ'
+import Visits from '../components/home/Visits'
 
 
 const Home = () => {
@@ -15,6 +16,7 @@ const Home = () => {
       <AboutZoo/>
       <Services/>
       <ZooFacts/>
+      <Visits/>
       <ZooGallery/>
       <TestimonialSwiper/>
       <FAQSection/>

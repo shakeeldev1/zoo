@@ -1,20 +1,28 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import camle from '../../assets/commonimages/camle.jpeg'
+import animal from '../../assets/commonimages/animal.jpeg'
+import dear from '../../assets/commonimages/dear.jpeg'
+import dears from '../../assets/commonimages/dears.jpeg'
+import duck from '../../assets/commonimages/duck.jpeg'
+import oxe1 from '../../assets/commonimages/oxeo.jpeg'
+import oxe2 from '../../assets/commonimages/oxea.jpeg'
+import oxe3 from '../../assets/commonimages/oxe (3).jpeg'
 
 const animals = [
-  { src: './images/g1.jpg', name: 'Crowned Crane' },
-  { src: './images/g2.jpg', name: 'Rhinoceros' },
-  { src: './images/g3.jpg', name: 'Flamingo' },
-  { src: './images/g4.jpg', name: 'Crocodile' },
-  { src: './images/g5.jpg', name: 'Lemur' },
-  { src: './images/g6.jpg', name: 'Fox' },
-  { src: './images/g7.jpg', name: 'Hornbill' },
-  { src: './images/g8.jpg', name: 'Meerkats' }
+  { src: camle,  },
+  { src: animal,  },
+  { src: dear,  },
+  { src: dears, },
+  { src: duck,  },
+  { src: oxe1, },
+  { src: oxe2,  },
+  { src: oxe3,  }
 ]
 
 const ZooGallery = () => {
   return (
-    <section className='py-16 bg-gray-50 lg:mt-16'>
+    <section className='py-2 bg-gray-50 lg:mt-16'>
       {/* Heading */}
       <div className='max-w-7xl mx-auto mb-16 px-6 md:px-12 lg:px-20 lg:text-left text-center'>
         <span

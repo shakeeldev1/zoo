@@ -3,14 +3,15 @@ import { motion } from 'framer-motion'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
 import { Heart, MapPin, Utensils, AlertCircle } from 'lucide-react'
-import animal1 from '../../assets/About/animal1.jpeg'
-import animal2 from '../../assets/About/animal2.jpeg'
-import animal3 from '../../assets/About/animal3.jpeg'
-import animal4 from '../../assets/About/animal4.jpg'
-import animal5 from '../../assets/About/animal5.jpeg'
-import animal6 from '../../assets/About/animal6.jpeg'
-import animal7 from '../../assets/About/animal7.jpeg'
-import animal8 from '../../assets/About/animal8.jpeg'
+import oxe10 from '../../assets/commonimages/oxe (10).jpeg'
+import oxe11 from '../../assets/commonimages/oxe (11).jpeg'
+import oxe12 from '../../assets/commonimages/oxe (12).jpeg'
+import oxe13 from '../../assets/commonimages/oxe (13).jpeg'
+import oxe14 from '../../assets/commonimages/oxe (14).jpeg'
+import oxe15 from '../../assets/commonimages/oxe (15).jpeg'
+import oxe16 from '../../assets/commonimages/oxe (16).jpeg'
+import oxe3 from '../../assets/commonimages/oxe (3).jpeg'
+
 // Section title component
 function SectionTitle ({ title, subtitle }) {
   return (
@@ -31,7 +32,8 @@ function StatusBadge ({ status }) {
     Vulnerable: 'bg-yellow-700 text-white',
     Endangered: 'bg-red-800 text-white',
     'Least Concern': 'bg-green-900 text-white',
-    'Near Threatened': 'bg-blue-800 text-white'
+    'Near Threatened': 'bg-blue-800 text-white',
+    Domesticated: 'bg-gray-800 text-white'
   }
 
   return (
@@ -56,76 +58,76 @@ function MeetAnimals () {
 
   const animals = [
     {
-      name: 'African Lion',
-      img:animal1,
-      habitat: 'Savannahs and grasslands',
-      diet: 'Carnivore',
-      status: 'Vulnerable',
+      name: 'Dear',
+      img: oxe10,
+      habitat: 'Deserts and arid regions',
+      diet: 'Herbivore',
+      status: 'Least Concern',
       description:
-        'The majestic king of the savannah, known for its impressive mane and powerful roar.'
+        'Dear are desert-adapted animals known for their ability to survive long periods without water and carry heavy loads across harsh terrains.'
     },
     {
-      name: 'Asian Elephant',
-      img: animal2,
+      name: 'Ostrich',
+      img: oxe11,
       habitat: 'Forests and grasslands',
       diet: 'Herbivore',
-      status: 'Endangered',
-      description:
-        'Highly intelligent and social creatures with strong family bonds and excellent memory.'
-    },
-    {
-      name: 'Macaw Parrot',
-      img: animal3,
-      habitat: 'Rainforests',
-      diet: 'Omnivore',
       status: 'Least Concern',
       description:
-        'Vibrantly colored birds known for their intelligence and ability to mimic human speech.'
+        'Ostrich are graceful animals recognized for their speed and agility, often found grazing peacefully in forests and open fields.'
     },
     {
-      name: 'Gentoo Penguin',
-      img: animal4,
-      habitat: 'Antarctic regions',
-      diet: 'Carnivore',
-      status: 'Near Threatened',
+      name: 'Dear',
+      img: oxe12,
+      habitat: 'Grasslands and farms',
+      diet: 'Herbivore',
+      status: 'Domesticated',
       description:
-        'The fastest swimming penguins, capable of reaching speeds up to 36 km/h underwater.'
+        'Dear are strong and intelligent animals widely used for transportation, farming, and sports, known for their loyalty and endurance.'
     },
     {
-      name: 'Giant Panda',
-      img: animal5,
-      habitat: 'Temperate forests in China',
-      diet: 'Herbivore (mainly bamboo)',
-      status: 'Vulnerable',
+      name: 'Peacock',
+      img: oxe13,
+      habitat: 'Farms and rural areas',
+      diet: 'Herbivore',
+      status: 'Domesticated',
       description:
-        'Known for their distinctive black-and-white fur and bamboo diet, pandas are a global conservation icon.'
+        'Peacocks are essential livestock animals providing milk and meat, playing a major role in agriculture and rural economies.'
     },
     {
-      name: 'Komodo Dragon',
-      img: animal6,
-      habitat: 'Indonesian islands',
-      diet: 'Carnivore',
-      status: 'Endangered',
-      description:
-        "The world's largest lizard, capable of hunting large prey with venomous bites."
-    },
-    {
-      name: 'Blue Whale',
-      img: animal7,
-      habitat: 'Oceans worldwide',
-      diet: 'Carnivore (krill)',
-      status: 'Endangered',
-      description:
-        'The largest animal ever known to have lived on Earth, reaching up to 30 meters in length.'
-    },
-    {
-      name: 'Rabit',
-      img: animal8,
-      habitat: 'Australian deserts and grasslands',
+      name: 'Dear',
+      img: oxe14,
+      habitat: 'Mountains and farms',
       diet: 'Herbivore',
       status: 'Least Concern',
       description:
-        'The largest marsupial, known for its powerful hind legs and ability to leap great distances.'
+        'Dear are highly adaptable animals known for their climbing ability and are commonly raised for milk, meat, and fiber.'
+    },
+    {
+      name: 'Dear',
+      img: oxe15,
+      habitat: 'Grasslands and farms',
+      diet: 'Herbivore',
+      status: 'Domesticated',
+      description:
+        'Dear are gentle animals raised for wool, meat, and milk, known for their flocking behavior and calm nature.'
+    },
+    {
+      name: 'Dear',
+      img: oxe16,
+      habitat: 'Wetlands and farms',
+      diet: 'Herbivore',
+      status: 'Near Threatened',
+      description:
+        'Dear are powerful animals often found near water sources, widely used in farming and valued for their strength and milk production.'
+    },
+    {
+      name: 'Ox',
+      img: oxe3,
+      habitat: 'Farms and agricultural lands',
+      diet: 'Herbivore',
+      status: 'Domesticated',
+      description:
+        'Ox are trained cattle used for plowing and transport, known for their strength, endurance, and importance in traditional farming.'
     }
   ]
 
@@ -150,7 +152,7 @@ function MeetAnimals () {
       <section className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16'>
         <SectionTitle
           title='Meet Our Animals'
-          subtitle="From majestic lions to playful penguins—get to know our residents and learn how we're protecting their future."
+          subtitle="From majestic animals to friendly farm species—get to know our residents and learn how we're protecting their future."
         />
 
         {/* Animal Grid */}
@@ -167,7 +169,6 @@ function MeetAnimals () {
               data-aos='zoom-in'
               data-aos-delay={i * 100}
             >
-              {/* Image with overlay + shine effect */}
               <div className='aspect-[4/3] sm:aspect-square overflow-hidden relative'>
                 <img
                   src={animal.img}
@@ -175,16 +176,13 @@ function MeetAnimals () {
                   loading='lazy'
                   className='w-full h-full object-cover transition-transform duration-700 group-hover:scale-110'
                 />
-                {/* gradient overlay */}
                 <div className='absolute inset-0 bg-gradient-to-t from-green-900/70 to-[#fdc500]/30 opacity-0 group-hover:opacity-90 transition-opacity duration-500' />
-                {/* shine sweep */}
                 <div className='absolute inset-0 -translate-x-full group-hover:translate-x-0 bg-gradient-to-r from-transparent via-white/40 to-transparent transition-transform duration-700' />
                 <div className='absolute top-3 right-3 sm:top-4 sm:right-4'>
                   <StatusBadge status={animal.status} />
                 </div>
               </div>
 
-              {/* Content */}
               <div className='p-4 sm:p-5 relative z-10'>
                 <h4 className='text-lg sm:text-xl font-bold text-slate-900 mb-2 group-hover:text-green-900 transition-colors duration-500'>
                   {animal.name}
@@ -230,8 +228,7 @@ function MeetAnimals () {
                 visible: { opacity: 1, y: 0 }
               }}
               whileHover={{ scale: 1.07, y: -6 }}
-              className='relative bg-white p-6 sm:p-8 rounded-2xl text-center shadow-md border border-slate-100 
-       transition-all duration-500 group overflow-hidden'
+              className='relative bg-white p-6 sm:p-8 rounded-2xl text-center shadow-md border border-slate-100 transition-all duration-500 group overflow-hidden'
               data-aos='zoom-in'
               data-aos-delay={i * 150}
             >

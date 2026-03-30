@@ -9,7 +9,7 @@ import {
   FaFutbol,
   FaHotel
 } from 'react-icons/fa'
-
+import ostrichlarge from '../../assets/commonimages/ostrichlarge.jpeg'
 const Services = () => {
   const leftServices = [
     {
@@ -158,7 +158,7 @@ const Services = () => {
         >
           <div className='relative w-72 h-72 sm:w-72 sm:h-72 md:w-72 md:h-72 lg:w-80 lg:h-80 transition-all duration-500 ease-in-out hover:scale-105 hover:shadow-[0_0_35px_rgba(34,197,94,0.5)] rounded-full'>
             <img
-              src='./images/service.jpg'
+              src={ostrichlarge}
               alt='service'
               className='w-full h-full rounded-full object-cover shadow-xl border-8 border-white'
             />

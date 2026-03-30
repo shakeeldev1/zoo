@@ -1,12 +1,11 @@
 import React from 'react';
-import ZooGate from "../../assets/ServicesImages/ZooGate.jpg";
-
+import ostrich from '../../assets/commonimages/ostrich.jpeg'
 const Header = () => {
     return (
         <div>
             <div className='relative w-full h-[300px] sm:h-[400px] md:h-[600px]'>
                 <img
-                    src={ZooGate}
+                    src={ostrich}
                     alt="Zoo Background"
                     className='w-full h-full object-cover'
                 />
