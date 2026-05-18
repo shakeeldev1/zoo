@@ -1,7 +1,7 @@
 import React from "react";
 import { FaTimes, FaMinus, FaPlus } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { decreaseQty, removeFromCart, addToCart } from "../../redux/CartSlice";
+import { decreaseQty, removeFromCart, addToCart } from "../../redux/cartbilling/CartSlice";
 
 const Cart = ({ close }) => {
   const dispatch = useDispatch();

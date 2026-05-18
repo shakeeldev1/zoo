@@ -7,8 +7,8 @@ import Home from './pages/Home'
 import BuyAnimalPage from './pages/BuyAnimalPage'
 import AOS from "aos";
 import "aos/dist/aos.css";
-import LoginForm from './pages/LoginForm';
-import SignupForm from './pages/SignupForm';
+import LoginForm from './components/auth/LoginForm';
+import SignupForm from './components/auth/SignupForm';
 import About from './pages/About'
 import Contact from './pages/Contact'
 import Footer from './components/common/Footer'

@@ -3,7 +3,7 @@ import { FaShoppingCart } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { addToCart } from "../../redux/CartSlice";
+import { addToCart } from "../../redux/cartbilling/CartSlice";
 
 function BuyAnimal() {
   const dispatch = useDispatch();
