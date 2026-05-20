@@ -32,5 +32,4 @@ const sendEmail = async (to, subject, text) => {
     throw error;
   }
 };
-
 export { sendEmail };

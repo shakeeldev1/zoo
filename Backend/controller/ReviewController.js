@@ -1,21 +1,48 @@
 import Review from "../model/ReviewsModel.js";
 export const createReview = async (req, res) => {
     try {
-        const { userId, rating, comment } = req.body;
+        const userId = req.userId; // This comes from the token
+        const { rating, comment } = req.body;
+        
+        // Validate required fields
+        if (!rating || !comment) {
+            return res.status(400).json({ 
+                message: "Rating and comment are required" 
+            });
+        }
+        
         const review = await Review.create({ userId, rating, comment });
-        res.status(201).json(review);
+        
+        // Populate user info before sending response
+        const populatedReview = await Review.findById(review._id).populate("userId", "name");
+        
+        res.status(201).json({
+            success: true,
+            message: "Review created successfully",
+            data: populatedReview
+        });
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        console.error("Create review error:", error);
+        res.status(400).json({ 
+            success: false,
+            message: error.message 
+        });
     }
 };
 
 export const getReviews = async (req, res) => {
     try {
         const reviews = await Review.find().populate("userId", "name");
-        res.status(200).json(reviews);
+        res.status(200).json({
+            success: true,
+            data: reviews
+        });
     }
     catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(400).json({ 
+            success: false,
+            message: error.message 
+        });
     }
 };
 
@@ -27,9 +54,15 @@ export const deleteReview = async (req, res) => {
             return res.status(404).json({ message: "Review not found" });
         }
         await Review.findByIdAndDelete(id);
-        res.status(200).json({ message: "Review deleted successfully" });
+        res.status(200).json({ 
+            success: true,
+            message: "Review deleted successfully"
+        });
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(400).json({ 
+            success: false,
+            message: error.message 
+        });
         }
 };
 

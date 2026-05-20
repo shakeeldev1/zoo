@@ -1,16 +1,32 @@
 import Animal from "../model/AnimalModel.js";
-import cloudinary from "../Cloudinay..js";
+import cloudinary from "../Cloudinay.js";
 import fs from "fs";
 
 export const createAnimal = async (req, res) => {
     try {
-        const { name, description } = req.body;
+
+        if (!req.file && req.files?.length) {
+            req.file = req.files[0];
+        }
+
+        const {
+            name,
+            description,
+            price,
+            quantity
+        } = req.body;
 
         // ✅ Validation
-        if (!name || !description || !req.file) {
+        if (
+            !name ||
+            !description ||
+            !price ||
+            !quantity ||
+            !req.file
+        ) {
             return res.status(400).json({
                 success: false,
-                message: "Name, description and image are required",
+                message: "Name, description, price, quantity and image are required",
             });
         }
 
@@ -28,6 +44,9 @@ export const createAnimal = async (req, res) => {
         const newAnimal = new Animal({
             name,
             description,
+            price,
+            quantity,
+
             animalimage: {
                 url: uploadedImage.secure_url,
                 publicId: uploadedImage.public_id,
@@ -43,6 +62,7 @@ export const createAnimal = async (req, res) => {
         });
 
     } catch (error) {
+
         console.error("Create Animal Error:", error);
 
         // ✅ If error occurs, try deleting file
@@ -108,76 +128,123 @@ export const getAllAnimal = async (req, res) => {
 };
 
 export const updateAnimal = async (req, res) => {
-    try {
-        const { id } = req.params;
-        let { name, description } = req.body;
+  try {
 
-        // ✅ Find existing animal
-        const animal = await Animal.findById(id);
+    console.log("Request body:", req.body);
+    console.log("Request file:", req.file);
+    console.log("Request params:", req.params);
 
-        if (!animal) {
-            return res.status(404).json({
-                success: false,
-                message: "Animal not found",
-            });
-        }
+    // ✅ Safe body handling
+    const body = req.body || {};
 
-        // ✅ Trim inputs (if provided)
-        if (name) name = name.trim();
-        if (description) description = description.trim();
+    let { name, description, price, quantity } = body;
+    const { id } = req.params;
 
-        let updatedImage = animal.animalimage;
+    // ✅ Check if animal exists
+    const animal = await Animal.findById(id);
 
-        // ✅ If new image uploaded
-        if (req.file && req.file.path) {
-
-            // 🔥 Delete old image from Cloudinary (if exists)
-            if (animal.animalimage?.publicId) {
-                await cloudinary.uploader.destroy(animal.animalimage.publicId);
-            }
-
-            // 🔥 Upload new image
-            const uploadedImage = await cloudinary.uploader.upload(req.file.path, {
-                folder: "animals",
-            });
-
-            updatedImage = {
-                url: uploadedImage.secure_url,
-                publicId: uploadedImage.public_id,
-            };
-
-            // ✅ Delete local file
-            fs.unlink(req.file.path, (err) => {
-                if (err) console.error("File delete error:", err);
-            });
-        }
-
-        // ✅ Update fields (only if provided)
-        animal.name = name || animal.name;
-        animal.description = description || animal.description;
-        animal.animalimage = updatedImage;
-
-        await animal.save();
-
-        return res.status(200).json({
-            success: true,
-            message: "Animal updated successfully",
-            data: animal,
-        });
-
-    } catch (error) {
-        console.error("Update Animal Error:", error);
-
-        // ✅ Cleanup local file if error happens
-        if (req.file?.path && fs.existsSync(req.file.path)) {
-            fs.unlinkSync(req.file.path);
-        }
-
-        return res.status(500).json({
-            success: false,
-            message: error.message || "Internal server error",
-        });
+    if (!animal) {
+      return res.status(404).json({
+        success: false,
+        message: "Animal not found",
+      });
     }
+
+    // ✅ Validation
+    if (
+      !name &&
+      !description &&
+      !price &&
+      !quantity &&
+      !req.file
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "No data provided for update",
+      });
+    }
+
+    // ✅ Trim strings
+    if (name) name = name.trim();
+    if (description) description = description.trim();
+
+    // ✅ Keep old image by default
+    let updatedImage = animal.animalimage;
+
+    // ✅ If new image uploaded
+    if (req.file) {
+
+      // 🔥 Delete old cloudinary image
+      if (animal.animalimage?.publicId) {
+        await cloudinary.uploader.destroy(
+          animal.animalimage.publicId
+        );
+      }
+
+      // 🔥 Upload new image
+      const uploadedImage = await cloudinary.uploader.upload(
+        req.file.path,
+        {
+          folder: "animals",
+        }
+      );
+
+      updatedImage = {
+        url: uploadedImage.secure_url,
+        publicId: uploadedImage.public_id,
+      };
+
+      // ✅ Delete local multer file
+      fs.unlink(req.file.path, (err) => {
+        if (err) {
+          console.error("File delete error:", err);
+        }
+      });
+    }
+
+    // ✅ Update only provided fields
+    if (name) {
+      animal.name = name;
+    }
+
+    if (description) {
+      animal.description = description;
+    }
+
+    if (price) {
+      animal.price = Number(price);
+    }
+
+    if (quantity) {
+      animal.quantity = Number(quantity);
+    }
+
+    // ✅ Update image
+    animal.animalimage = updatedImage;
+
+    // ✅ Save
+    await animal.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Animal updated successfully",
+      data: animal,
+    });
+
+  } catch (error) {
+
+    console.error("Update Animal Error:", error);
+
+    // ✅ Delete local file if error occurs
+    if (req.file?.path && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Internal server error",
+    });
+  }
 };
 
 export const deleteAnimal = async (req, res) => {
@@ -224,6 +291,8 @@ export const deleteAnimal = async (req, res) => {
         });
     }
 };
+
+
 
 
 
