@@ -33,6 +33,15 @@ export const buyAnimalApi = createApi({
       providesTags: ["BuyAnimal"],
     }),
 
+    // ✅ GET ALL CART ITEMS
+    getAllBuyAnimals: builder.query({
+      query: () => ({
+        url: "/getallbuyanimal",
+        method: "GET",
+      }),
+      providesTags: ["BuyAnimal"],
+    }),
+
     // ✅ ADD TO CART
  addBuyAnimal: builder.mutation({
   query: (animalId) => ({
@@ -82,6 +91,7 @@ export const {
   useDeleteBuyAnimalMutation,
   useIncreaseBuyAnimalQtyMutation,
   useDecreaseBuyAnimalQtyMutation,
+  useGetAllBuyAnimalsQuery,
 } = buyAnimalApi;
 
 export default buyAnimalApi;

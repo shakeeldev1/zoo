@@ -2,9 +2,9 @@
 import {
   createContext,
   useContext,
-  useEffect,
   useMemo,
   useState,
+  useEffect,
 } from "react";
 
 import { useVerifyUserQuery } from "../redux/api/AuthApi";
@@ -20,78 +20,86 @@ export const useAppContext = () => {
 // ================= PROVIDER =================
 const ContextApi = ({ children }) => {
 
+  // ================= TOKEN =================
+  const storedToken = localStorage.getItem("token");
+
   // ================= STATES =================
-  const [token, setToken] = useState(null);
+  const [token, setToken] = useState(storedToken || null);
 
   const [isLogin, setIsLogin] = useState(false);
 
   const [loading, setLoading] = useState(true);
 
-  // ================= LOAD TOKEN FROM STORAGE =================
-  useEffect(() => {
-
-    const storedToken = localStorage.getItem("token");
-
-    if (storedToken) {
-      setToken(storedToken);
-    } else {
-      setToken(null);
-      setIsLogin(false);
-      setLoading(false);
-    }
-
-  }, []);
-
-  // ================= VERIFY TOKEN FROM BACKEND =================
+  // ================= VERIFY USER =================
   const {
     data,
     isSuccess,
     isError,
-    isLoading,
+    isLoading: verifyLoading,
   } = useVerifyUserQuery(undefined, {
-    skip: !token, // 🔥 ONLY RUN IF TOKEN EXISTS
+    skip: !token,
   });
 
-  // ================= VALIDATION CHECK =================
+  // ================= TOKEN VERIFY =================
   useEffect(() => {
 
     // NO TOKEN
-    if (!token) return;
+    if (!token) {
 
-    // WHILE VERIFYING
-    if (isLoading) {
-      setLoading(true);
+      setIsLogin(false);
+
+      setLoading(false);
+
       return;
     }
 
-    // TOKEN VALID
+    // VERIFY LOADING
+    if (verifyLoading) {
+
+      setLoading(true);
+
+      return;
+    }
+
+    // VALID TOKEN
     if (isSuccess && data?.success) {
+
       setIsLogin(true);
+
       setLoading(false);
     }
 
-    // TOKEN INVALID
+    // INVALID TOKEN
     if (isError) {
+
       localStorage.removeItem("token");
+
       setToken(null);
+
       setIsLogin(false);
+
       setLoading(false);
     }
 
-  }, [token, isSuccess, isError, isLoading, data]);
+  }, [
+    token,
+    verifyLoading,
+    isSuccess,
+    isError,
+    data,
+  ]);
 
-  // ================= LOGIN FUNCTION =================
+  // ================= LOGIN =================
   const loginUser = (newToken) => {
 
     localStorage.setItem("token", newToken);
 
     setToken(newToken);
 
-    // ❌ DO NOT SET isLogin HERE (backend will decide)
-    setIsLogin(false);
+    setIsLogin(true);
   };
 
-  // ================= LOGOUT FUNCTION =================
+  // ================= LOGOUT =================
   const logoutUser = () => {
 
     localStorage.removeItem("token");
@@ -103,7 +111,7 @@ const ContextApi = ({ children }) => {
 
   // ================= VALUE =================
   const value = useMemo(() => ({
-    
+
     token,
     isLogin,
     loading,

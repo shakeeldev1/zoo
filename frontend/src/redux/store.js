@@ -7,6 +7,7 @@ import { AuthApi } from "./api/AuthApi";
 import reviewsApi from "./api/ReviwsApi";
 import animalApi from "./api/AnimalApi";
 import buyAnimalApi from "./api/BuyAnimal";
+import ticketApi from "./api/TicketApi";
 export const store = configureStore({
   reducer: {
     // normal slices
@@ -17,8 +18,9 @@ export const store = configureStore({
     [reviewsApi.reducerPath]: reviewsApi.reducer,
     [animalApi.reducerPath]: animalApi.reducer,
     [buyAnimalApi.reducerPath]: buyAnimalApi.reducer,
+    [ticketApi.reducerPath]: ticketApi.reducer,
   },
 
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(AuthApi.middleware, reviewsApi.middleware, animalApi.middleware, buyAnimalApi.middleware),
+    getDefaultMiddleware().concat(AuthApi.middleware, reviewsApi.middleware, animalApi.middleware, buyAnimalApi.middleware, ticketApi.middleware),
 });

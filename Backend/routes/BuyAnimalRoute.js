@@ -1,10 +1,11 @@
 import express from "express";
-import { addBuyAnimal, getBuyAnimal, deleteBuyAnimal, increaseBuyAnimalQty, decreaseBuyAnimalQty } from "../controller/BuyAnimalController.js";
+import { addBuyAnimal, getBuyAnimal, deleteBuyAnimal, increaseBuyAnimalQty, decreaseBuyAnimalQty, getAllBuyAnimal } from "../controller/BuyAnimalController.js";
 import {authenticateToken} from "../middlware/VerifyToken.js";
 const BuyAnimalRoute = express.Router();
 BuyAnimalRoute.post("/buyanimal/:animalId",authenticateToken,addBuyAnimal);
 BuyAnimalRoute.get("/getbuyanimal", authenticateToken, getBuyAnimal);
 BuyAnimalRoute.delete("/deletebuyanimal/:id",deleteBuyAnimal);
+BuyAnimalRoute.get("/getallbuyanimal", getAllBuyAnimal);
 BuyAnimalRoute.put("/increasebuyanimalqty/:id",increaseBuyAnimalQty);
 BuyAnimalRoute.put("/decreasebuyanimalqty/:id",decreaseBuyAnimalQty);
 export default BuyAnimalRoute;

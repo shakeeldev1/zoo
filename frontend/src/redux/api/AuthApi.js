@@ -7,12 +7,20 @@ export const AuthApi = createApi({
     baseUrl: "http://localhost:5000/v1/api/users",
     credentials: "include", // Important for cookies/auth
     prepareHeaders: (headers) => {
-      // Add any custom headers here
-      headers.set("Content-Type", "application/json");
-      return headers;
-    },
-  }),
 
+    headers.set("Content-Type", "application/json");
+
+    // ================= TOKEN =================
+    const token = localStorage.getItem("token");
+
+    // ================= SEND TOKEN =================
+    if (token) {
+      headers.set("Authorization", `Bearer ${token}`);
+    }
+
+    return headers;
+  },
+}),
 
   tagTypes: ["User"],
   endpoints: (builder) => ({

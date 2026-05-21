@@ -111,7 +111,6 @@ export const verifyOtp = async (req, res) => {
       });
     }
 
-    // ================= CHECK OTP =================
     if (user.otp !== otp) {
       return res.status(400).json({
         success: false,
@@ -136,15 +135,10 @@ export const verifyOtp = async (req, res) => {
     const token = jwt.sign(
       { id: user._id },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "1 day" }
     );
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 60 * 60 * 1000,
-    });
+   
 
     return res.status(200).json({
       success: true,
@@ -319,6 +313,7 @@ export const loginUser = async (req, res) => {
 };
 
 export const verifyUser = async (req, res) => {
+
   try {
 
     return res.status(200).json({
@@ -330,7 +325,7 @@ export const verifyUser = async (req, res) => {
 
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Verification failed",
     });
   }
 };

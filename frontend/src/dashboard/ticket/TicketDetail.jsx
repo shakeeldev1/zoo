@@ -1,171 +1,642 @@
-import React, { useState } from 'react'
+import React, { useState } from "react";
 
-const initialTickets = [
-  { id: 1, type: 'Adult', price: 20, availability: 'Available', status: 'Active' },
-  { id: 2, type: 'Child', price: 12, availability: 'Available', status: 'Active' },
-  { id: 3, type: 'Family', price: 55, availability: 'Limited', status: 'Active' }
-]
+import {
+  FaEdit,
+  FaTrash,
+  FaPlus,
+  FaTicketAlt,
+  FaDollarSign,
+  FaLayerGroup,
+} from "react-icons/fa";
+
+import { toast, ToastContainer } from "react-toastify";
+
+import "react-toastify/dist/ReactToastify.css";
+
+import {
+  useGetTicketsQuery,
+  useUpdateTicketMutation,
+  useDeleteTicketMutation,
+  useCreateTicketMutation,
+} from "../../redux/api/TicketApi";
 
 const TicketDetail = () => {
-  const [ticketTypes, setTicketTypes] = useState(initialTickets)
-  const [form, setForm] = useState({ type: '', price: '', availability: 'Available', status: 'Active' })
-  const [editingId, setEditingId] = useState(null)
 
+  // ================= GET TICKETS =================
+  const {
+    data,
+    isLoading,
+    isError,
+    refetch,
+  } = useGetTicketsQuery();
+
+  // ================= MUTATIONS =================
+  const [createTicket, { isLoading: createLoading }] =
+    useCreateTicketMutation();
+
+  const [updateTicket, { isLoading: updateLoading }] =
+    useUpdateTicketMutation();
+
+  const [deleteTicket] =
+    useDeleteTicketMutation();
+
+  // ================= STATES =================
+  const [editingId, setEditingId] =
+    useState(null);
+
+  const [preview, setPreview] =
+    useState(null);
+
+  const [form, setForm] = useState({
+    name: "",
+    description: "",
+    price: "",
+    image: null,
+  });
+
+  // ================= DATA =================
+  const tickets = data?.data || [];
+
+  // ================= HANDLE CHANGE =================
   const handleChange = (field, value) => {
-    setForm(prev => ({ ...prev, [field]: value }))
-  }
 
-  const handleSubmit = (event) => {
-    event.preventDefault()
-    const cleanedPrice = Number(form.price)
-    if (!form.type.trim() || Number.isNaN(cleanedPrice) || cleanedPrice <= 0) {
-      return
+    setForm((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  // ================= IMAGE CHANGE =================
+  const handleImageChange = (e) => {
+
+    const file = e.target.files[0];
+
+    if (file) {
+
+      setForm((prev) => ({
+        ...prev,
+        image: file,
+      }));
+
+      setPreview(URL.createObjectURL(file));
+    }
+  };
+
+  // ================= SUBMIT =================
+  const handleSubmit = async (e) => {
+
+    e.preventDefault();
+
+    // VALIDATION
+    if (
+      !form.name.trim() ||
+      !form.description.trim() ||
+      !form.price
+    ) {
+
+      return toast.error(
+        "Please fill all required fields"
+      );
     }
 
-    if (editingId) {
-      setTicketTypes(prev => prev.map(ticket => ticket.id === editingId ? { ...ticket, ...form, price: cleanedPrice } : ticket))
-      setEditingId(null)
-    } else {
-      const nextId = Math.max(0, ...ticketTypes.map(ticket => ticket.id)) + 1
-      setTicketTypes(prev => [...prev, { id: nextId, ...form, price: cleanedPrice }])
+    try {
+
+      const formData = new FormData();
+
+      // ================= IMPORTANT =================
+      // THESE FIELD NAMES MUST MATCH BACKEND
+      formData.append("name", form.name);
+
+      formData.append(
+        "description",
+        form.description
+      );
+
+      formData.append("price", form.price);
+
+      // ================= IMAGE =================
+      // MULTER FIELD NAME MUST BE SAME
+      if (form.image) {
+
+        formData.append(
+          "ticketimage",
+          form.image
+        );
+      }
+
+      // ================= UPDATE =================
+      if (editingId) {
+
+        await updateTicket({
+          id: editingId,
+          formData,
+        }).unwrap();
+
+        toast.success(
+          "Ticket updated successfully"
+        );
+
+      } else {
+
+        // CREATE IMAGE REQUIRED
+        if (!form.image) {
+
+          return toast.error(
+            "Please select ticket image"
+          );
+        }
+
+        await createTicket(formData).unwrap();
+
+        toast.success(
+          "Ticket created successfully"
+        );
+      }
+
+      // ================= RESET =================
+      setForm({
+        name: "",
+        description: "",
+        price: "",
+        image: null,
+      });
+
+      setPreview(null);
+
+      setEditingId(null);
+
+      refetch();
+
+    } catch (error) {
+
+      console.log(error);
+
+      toast.error(
+        error?.data?.message ||
+        "Something went wrong"
+      );
     }
+  };
 
-    setForm({ type: '', price: '', availability: 'Available', status: 'Active' })
-  }
-
+  // ================= EDIT =================
   const handleEdit = (ticket) => {
-    setEditingId(ticket.id)
-    setForm({ type: ticket.type, price: ticket.price.toString(), availability: ticket.availability, status: ticket.status })
-  }
 
-  const handleDelete = (id) => {
-    setTicketTypes(prev => prev.filter(ticket => ticket.id !== id))
-    if (editingId === id) {
-      setEditingId(null)
-      setForm({ type: '', price: '', availability: 'Available', status: 'Active' })
+    setEditingId(ticket._id);
+
+    setForm({
+      name: ticket.name || "",
+      description: ticket.description || "",
+      price: ticket.price || "",
+      image: null,
+    });
+
+    // ================= IMPORTANT =================
+    // BACKEND FIELD IS ticketimage
+    setPreview(ticket.ticketimage);
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  // ================= DELETE =================
+  const handleDelete = async (id) => {
+
+    const confirmDelete =
+      window.confirm(
+        "Are you sure you want to delete this ticket?"
+      );
+
+    if (!confirmDelete) return;
+
+    try {
+
+      await deleteTicket(id).unwrap();
+
+      toast.success(
+        "Ticket deleted successfully"
+      );
+
+      refetch();
+
+    } catch (error) {
+
+      console.log(error);
+
+      toast.error(
+        error?.data?.message ||
+        "Delete failed"
+      );
     }
-  }
+  };
 
+  // ================= CANCEL =================
   const handleCancel = () => {
-    setEditingId(null)
-    setForm({ type: '', price: '', availability: 'Available', status: 'Active' })
-  }
+
+    setEditingId(null);
+
+    setForm({
+      name: "",
+      description: "",
+      price: "",
+      image: null,
+    });
+
+    setPreview(null);
+  };
 
   return (
-    <section className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
-      <div className="space-y-6">
-        <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-          <h3 className="text-xl font-semibold text-[#004f2f]">Ticket Catalog</h3>
-          <p className="mt-2 text-sm text-gray-600">Manage ticket pricing, availability, and event categories.</p>
-        </div>
+    <>
+      {/* ================= TOAST ================= */}
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        theme="colored"
+      />
 
-        <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-full text-left text-sm">
-              <thead>
-                <tr className="text-gray-500">
-                  <th className="py-3 px-4">ID</th>
-                  <th className="py-3 px-4">Type</th>
-                  <th className="py-3 px-4">Price</th>
-                  <th className="py-3 px-4">Availability</th>
-                  <th className="py-3 px-4">Status</th>
-                  <th className="py-3 px-4">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {ticketTypes.map(ticket => (
-                  <tr key={ticket.id} className="border-t border-gray-100 hover:bg-gray-50">
-                    <td className="py-3 px-4 text-gray-700">#{ticket.id}</td>
-                    <td className="py-3 px-4 font-medium text-gray-900">{ticket.type}</td>
-                    <td className="py-3 px-4 text-gray-700">${ticket.price}</td>
-                    <td className="py-3 px-4 text-gray-700">{ticket.availability}</td>
-                    <td className="py-3 px-4 text-gray-700">{ticket.status}</td>
-                    <td className="py-3 px-4 flex flex-wrap gap-2">
-                      <button onClick={() => handleEdit(ticket)} className="rounded-full border border-[#00633E] px-3 py-1 text-sm font-medium text-[#00633E] transition hover:bg-[#00633E] hover:text-white">
-                        Edit
-                      </button>
-                      <button onClick={() => handleDelete(ticket.id)} className="rounded-full border border-red-200 bg-red-50 px-3 py-1 text-sm font-medium text-red-600 transition hover:bg-red-100">
-                        Delete
-                      </button>
-                    </td>
+      <section className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
+
+        {/* ================= LEFT SIDE ================= */}
+        <div className="space-y-5">
+
+          {/* ================= TOP CARD ================= */}
+          <div className="rounded-3xl border border-gray-200 bg-white px-6 py-5 shadow-sm">
+
+            <div className="flex items-center justify-between">
+
+              <div>
+
+                <h3 className="text-2xl font-bold text-[#004f2f]">
+                  Ticket Catalog
+                </h3>
+
+                <p className="mt-1 text-sm text-gray-600">
+                  Manage all event tickets professionally.
+                </p>
+
+              </div>
+
+              {/* STATS */}
+              <div className="flex items-center gap-3">
+
+                <div className="rounded-2xl bg-green-50 px-5 py-3 border border-green-100">
+
+                  <div className="flex items-center gap-2">
+
+                    <FaTicketAlt className="text-sm text-[#00633E]" />
+
+                    <p className="text-xs text-gray-500">
+                      Tickets
+                    </p>
+
+                  </div>
+
+                  <h2 className="text-xl font-bold text-[#00633E]">
+                    {tickets.length}
+                  </h2>
+
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          {/* ================= TABLE ================= */}
+          <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+
+            <div className="overflow-x-auto">
+
+              <table className="w-full min-w-full text-left text-sm">
+
+                <thead>
+
+                  <tr className="border-b border-gray-100 text-gray-500">
+
+                    <th className="py-4 px-4">
+                      Ticket
+                    </th>
+
+                    <th className="py-4 px-4">
+                      Description
+                    </th>
+
+                    <th className="py-4 px-4">
+                      Price
+                    </th>
+
+                    <th className="py-4 px-4">
+                      Actions
+                    </th>
+
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+
+                <tbody>
+
+                  {isLoading ? (
+
+                    <tr>
+
+                      <td
+                        colSpan={4}
+                        className="py-16 text-center"
+                      >
+
+                        <div className="flex flex-col items-center gap-3">
+
+                          <div className="w-12 h-12 border-4 border-[#00633E] border-t-transparent rounded-full animate-spin"></div>
+
+                          <p className="font-semibold text-[#00633E]">
+                            Loading Tickets...
+                          </p>
+
+                        </div>
+
+                      </td>
+                    </tr>
+
+                  ) : isError ? (
+
+                    <tr>
+
+                      <td
+                        colSpan={4}
+                        className="py-16 text-center text-red-500 font-semibold"
+                      >
+                        Failed To Load Tickets
+                      </td>
+                    </tr>
+
+                  ) : tickets.length === 0 ? (
+
+                    <tr>
+
+                      <td
+                        colSpan={4}
+                        className="py-16 text-center text-gray-500"
+                      >
+                        No Tickets Available
+                      </td>
+                    </tr>
+
+                  ) : (
+
+                    tickets.map((ticket) => (
+
+                      <tr
+                        key={ticket._id}
+                        className="border-b border-gray-100 hover:bg-gray-50 transition"
+                      >
+
+                        {/* IMAGE + NAME */}
+                        <td className="py-4 px-4">
+
+                          <div className="flex items-center gap-3">
+
+                            <img
+                              src={
+                                ticket.ticketimage ||
+                                "https://via.placeholder.com/100"
+                              }
+                              alt={ticket.name}
+                              className="h-14 w-14 rounded-2xl object-cover border border-gray-200"
+                            />
+
+                            <div>
+
+                              <h3 className="font-semibold text-gray-900">
+                                {ticket.name}
+                              </h3>
+
+                              <p className="text-xs text-gray-500">
+                                ID: {ticket._id.slice(0, 8)}
+                              </p>
+
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* DESCRIPTION */}
+                        <td className="py-4 px-4 text-gray-600 max-w-xs">
+
+                          <p className="line-clamp-2">
+                            {ticket.description}
+                          </p>
+
+                        </td>
+
+                        {/* PRICE */}
+                        <td className="py-4 px-4">
+
+                          <div className="inline-flex items-center gap-1 rounded-full bg-green-50 px-3 py-1 text-[#00633E] font-semibold border border-green-100">
+
+                            <FaDollarSign className="text-xs" />
+
+                            {ticket.price}
+
+                          </div>
+                        </td>
+
+                        {/* ACTIONS */}
+                        <td className="py-4 px-4">
+
+                          <div className="flex items-center gap-2">
+
+                            {/* EDIT */}
+                            <button
+                              onClick={() =>
+                                handleEdit(ticket)
+                              }
+                              className="flex items-center gap-1 rounded-full border border-[#00633E] px-3 py-1.5 text-xs font-medium text-[#00633E] transition hover:bg-[#00633E] hover:text-white"
+                            >
+
+                              <FaEdit className="text-[11px]" />
+
+                              Edit
+
+                            </button>
+
+                            {/* DELETE */}
+                            <button
+                              onClick={() =>
+                                handleDelete(ticket._id)
+                              }
+                              className="flex items-center gap-1 rounded-full border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 transition hover:bg-red-100"
+                            >
+
+                              <FaTrash className="text-[11px]" />
+
+                              Delete
+
+                            </button>
+
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-        <div className="flex items-center justify-between gap-3 mb-5">
-          <div>
-            <h3 className="text-xl font-semibold text-[#004f2f]">{editingId ? 'Update Ticket' : 'Add Ticket'}</h3>
-            <p className="text-sm text-gray-600">Use this form to create or edit ticket types quickly.</p>
+        {/* ================= RIGHT SIDE ================= */}
+        <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm h-fit sticky top-5">
+
+          {/* TOP */}
+          <div className="mb-6">
+
+            <div className="flex items-center gap-3">
+
+              <div className="bg-green-50 p-3 rounded-2xl border border-green-100">
+
+                <FaLayerGroup className="text-[#00633E]" />
+
+              </div>
+
+              <div>
+
+                <h3 className="text-2xl font-bold text-[#004f2f]">
+                  {editingId
+                    ? "Update Ticket"
+                    : "Add Ticket"}
+                </h3>
+
+                <p className="text-sm text-gray-600 mt-1">
+                  Manage ticket information professionally.
+                </p>
+
+              </div>
+            </div>
           </div>
-        </div>
 
-        <form className="space-y-4" onSubmit={handleSubmit}>
-          <label className="block text-sm font-medium text-gray-700">
-            Ticket Type
-            <input
-              value={form.type}
-              onChange={(event) => handleChange('type', event.target.value)}
-              className="mt-2 w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-[#00633E] focus:ring-2 focus:ring-[#00633E]/10"
-              placeholder="Adult, Child, Family"
-            />
-          </label>
+          {/* ================= FORM ================= */}
+          <form
+            className="space-y-5"
+            onSubmit={handleSubmit}
+          >
 
-          <label className="block text-sm font-medium text-gray-700">
-            Price ($)
-            <input
-              type="number"
-              value={form.price}
-              onChange={(event) => handleChange('price', event.target.value)}
-              className="mt-2 w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-[#00633E] focus:ring-2 focus:ring-[#00633E]/10"
-              placeholder="20"
-            />
-          </label>
+            {/* NAME */}
+            <label className="block text-sm font-medium text-gray-700">
 
-          <label className="block text-sm font-medium text-gray-700">
-            Availability
-            <select
-              value={form.availability}
-              onChange={(event) => handleChange('availability', event.target.value)}
-              className="mt-2 w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-[#00633E] focus:ring-2 focus:ring-[#00633E]/10"
-            >
-              <option>Available</option>
-              <option>Limited</option>
-              <option>Sold Out</option>
-            </select>
-          </label>
+              Ticket Name
 
-          <label className="block text-sm font-medium text-gray-700">
-            Status
-            <select
-              value={form.status}
-              onChange={(event) => handleChange('status', event.target.value)}
-              className="mt-2 w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-[#00633E] focus:ring-2 focus:ring-[#00633E]/10"
-            >
-              <option>Active</option>
-              <option>Paused</option>
-              <option>Archived</option>
-            </select>
-          </label>
+              <input
+                type="text"
+                value={form.name}
+                onChange={(e) =>
+                  handleChange(
+                    "name",
+                    e.target.value
+                  )
+                }
+                className="mt-2 w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm outline-none transition focus:border-[#00633E] focus:ring-2 focus:ring-[#00633E]/10"
+                placeholder="VIP Ticket"
+              />
+            </label>
 
-          <div className="flex flex-wrap gap-3">
-            <button type="submit" className="rounded-2xl bg-[#00633E] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#004f2f]">
-              {editingId ? 'Save Changes' : 'Add Ticket'}
-            </button>
-            {editingId && (
-              <button type="button" onClick={handleCancel} className="rounded-2xl border border-gray-300 bg-white px-5 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50">
-                Cancel
-              </button>
+            {/* DESCRIPTION */}
+            <label className="block text-sm font-medium text-gray-700">
+
+              Description
+
+              <textarea
+                rows={4}
+                value={form.description}
+                onChange={(e) =>
+                  handleChange(
+                    "description",
+                    e.target.value
+                  )
+                }
+                className="mt-2 w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm outline-none transition focus:border-[#00633E] focus:ring-2 focus:ring-[#00633E]/10 resize-none"
+                placeholder="Enter ticket description"
+              />
+            </label>
+
+            {/* PRICE */}
+            <label className="block text-sm font-medium text-gray-700">
+
+              Price
+
+              <input
+                type="number"
+                value={form.price}
+                onChange={(e) =>
+                  handleChange(
+                    "price",
+                    e.target.value
+                  )
+                }
+                className="mt-2 w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm outline-none transition focus:border-[#00633E] focus:ring-2 focus:ring-[#00633E]/10"
+                placeholder="100"
+              />
+            </label>
+
+            {/* IMAGE */}
+            <label className="block text-sm font-medium text-gray-700">
+
+              Ticket Image
+
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="mt-2 w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm"
+              />
+            </label>
+
+            {/* PREVIEW */}
+            {preview && (
+
+              <div className="rounded-3xl overflow-hidden border border-gray-200">
+
+                <img
+                  src={preview}
+                  alt="Preview"
+                  className="h-52 w-full object-cover"
+                />
+
+              </div>
             )}
-          </div>
-        </form>
-      </div>
-    </section>
-  )
-}
 
-export default TicketDetail
+            {/* BUTTONS */}
+            <div className="flex flex-wrap gap-3 pt-2">
+
+              <button
+                type="submit"
+                disabled={
+                  createLoading ||
+                  updateLoading
+                }
+                className="flex items-center gap-2 rounded-2xl bg-[#00633E] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#004f2f]"
+              >
+
+                <FaPlus className="text-xs" />
+
+                {editingId
+                  ? "Save Changes"
+                  : "Add Ticket"}
+
+              </button>
+
+              {editingId && (
+
+                <button
+                  type="button"
+                  onClick={handleCancel}
+                  className="rounded-2xl border border-gray-300 bg-white px-5 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
+          </form>
+        </div>
+      </section>
+    </>
+  );
+};
+export default TicketDetail;
