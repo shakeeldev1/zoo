@@ -23,30 +23,68 @@ import AnimalsPage from './pages/dashboard/Animals'
 import Tickets from './pages/dashboard/Tickets'
 import VisitSchools from './components/home/VisitSchools'
 import ScrollToTop from './components/common/ScrollToTop'
+import TicketCart from './components/common/TicketCart'
+import TicketPages from './pages/TicketPages'
 
 // ============================================
 // MAIN LAYOUT - User facing pages
 // ============================================
 const MainLayout = () => {
+
+  // ================= STATES =================
   const [isCartOpen, setIsCartOpen] = useState(false);
 
-  const openCart = () => setIsCartOpen(true);
+  const [isTicketCartOpen, setIsTicketCartOpen] =
+    useState(false);
+
+  // ================= CART =================
+  const openCart = () => {
+
+    setIsTicketCartOpen(false);
+    setIsCartOpen(true);
+
+  };
+
   const closeCart = () => setIsCartOpen(false);
 
-  return (
-    <div>
-      <ScrollToTop />
-      <Navbar openCart={openCart} />
-      {isCartOpen && <Cart close={closeCart} />}
-      <Outlet />
-      <Footer />
-    </div>
-  )
-}
+  // ================= TICKET CART =================
+  const openTicketCart = () => {
 
-// ============================================
-// ADMIN LAYOUT - Dashboard pages
-// ============================================
+    setIsCartOpen(false);
+    setIsTicketCartOpen(true);
+
+  };
+
+  const closeTicketCart = () =>
+    setIsTicketCartOpen(false);
+
+  return (
+    <div className="overflow-hidden">
+
+      <ScrollToTop />
+
+      <Navbar
+        openCart={openCart}
+        openTicketCart={openTicketCart}
+      />
+
+      {isCartOpen && (
+        <Cart close={closeCart} />
+      )}
+
+      {isTicketCartOpen && (
+        <TicketCart close={closeTicketCart} />
+      )}
+
+      <Outlet />
+
+      <Footer />
+
+    </div>
+  );
+};
+
+
 const AdminLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
@@ -156,7 +194,8 @@ const router = createBrowserRouter([
       { path: "/signup", element: <SignupForm /> },
       { path: "/contact", element: <Contact /> },
       { path: "/events", element: <Events /> },
-      { path: "/buyanimal", element: <BuyAnimalPage /> }
+      { path: "/buyanimal", element: <BuyAnimalPage /> },
+      { path: "/buyticket", element: <TicketPages /> }
     ]
   },
   // Admin/Dashboard routes

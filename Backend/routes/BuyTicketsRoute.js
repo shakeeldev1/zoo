@@ -1,8 +1,11 @@
 import express from "express";
-import { addBuyTicket, getBuyTickets, deleteBuyTicket, getBuyTicketById } from "../controller/BuyTicketsController.js";
+import { addBuyTicket, getBuyTickets, deleteBuyTicket, getBuyTicketById, increaseBuyTicketQuantity, decreaseBuyTicketQuantity } from "../controller/BuyTicketController.js";
+import { authenticateToken } from "../middlware/VerifyToken.js";
 const BuyTicketsRoute = express.Router();
-BuyTicketsRoute.post("/buytickets",addBuyTicket);
-BuyTicketsRoute.get("/getbuytickets",getBuyTickets);
-BuyTicketsRoute.get("/getbuyticketbyid/:userId",getBuyTicketById);
-BuyTicketsRoute.delete("/deletebuyticket/:ticketId",deleteBuyTicket);
+BuyTicketsRoute.post("/buy-ticket/:ticketId",authenticateToken,addBuyTicket);
+BuyTicketsRoute.get("/getbuytickets",authenticateToken,getBuyTickets);
+BuyTicketsRoute.get("/getbuyticketbyid/:id", authenticateToken, getBuyTicketById);
+BuyTicketsRoute.delete("/deletebuyticket/:id", authenticateToken, deleteBuyTicket);
+BuyTicketsRoute.put("/increasebuyticketquantity/:id", authenticateToken, increaseBuyTicketQuantity);
+BuyTicketsRoute.put("/decreasebuyticketquantity/:id", authenticateToken, decreaseBuyTicketQuantity);
 export default BuyTicketsRoute;

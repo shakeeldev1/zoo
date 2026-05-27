@@ -9,21 +9,18 @@ export const createTicket = async (
 ) => {
   try {
 
-    // ================= DEBUG =================
-    console.log(req.file);
-
-    // ================= BODY =================
     const {
       name,
       description,
       price,
+      ticketQty
     } = req.body;
 
-    // ================= VALIDATION =================
     if (
       !name ||
       !description ||
       !price ||
+      !ticketQty||
       !req.file
     ) {
       return res.status(400).json({
@@ -42,7 +39,6 @@ export const createTicket = async (
         }
       );
 
-    // ================= DELETE LOCAL FILE =================
     fs.unlink(
       req.file.path,
       (err) => {
@@ -55,12 +51,12 @@ export const createTicket = async (
       }
     );
 
-    // ================= CREATE TICKET =================
     const newTicket =
       await Ticket.create({
         name,
         description,
         price,
+        ticketQty,
 
         ticketimage: {
           public_id:
@@ -133,14 +129,17 @@ export const getTicketById = async (req, res) => {
     }
 };
 
-
-
 export const updateTicket = async (req, res) => {
   try {
 
     const { id } = req.params;
 
-    const { name, description, price } = req.body;
+    const {
+      name,
+      description,
+      price,
+      ticketQty,
+    } = req.body;
 
     // ================= FIND TICKET =================
     const ticket = await Ticket.findById(id);
@@ -163,6 +162,10 @@ export const updateTicket = async (req, res) => {
 
     if (price) {
       ticket.price = price;
+    }
+
+    if (ticketQty) {
+      ticket.ticketQty = ticketQty;
     }
 
     // ================= IMAGE UPDATE =================
@@ -199,7 +202,6 @@ export const updateTicket = async (req, res) => {
       });
     }
 
-    // ================= SAVE =================
     await ticket.save();
 
     return res.status(200).json({

@@ -5,6 +5,7 @@ import reviewRouter from './routes/ReviewRoute.js';
 import animalRouter from './routes/AnimalRoute.js';
 import ticketRouter from './routes/TicketRoute.js';
 import BuyAnimalRoute from './routes/BuyAnimalRoute.js';
+import BuyTicketsRoute from './routes/BuyTicketsRoute.js';
 import dotenv from 'dotenv'
 dotenv.config()
 import cors from 'cors';
@@ -29,6 +30,7 @@ app.use("/v2/api/reviews", reviewRouter);
 app.use("/v3/api/animal", animalRouter);
 app.use("/v4/api/buy-animals", BuyAnimalRoute);
 app.use("/v5/api/tickets", ticketRouter);
+app.use("/v6/api/buy-tickets", BuyTicketsRoute);
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });

@@ -101,7 +101,6 @@ export const verifyOtp = async (req, res) => {
   try {
     const { email, otp } = req.body;
 
-    // ================= CHECK USER =================
     const user = await User.findOne({ email });
 
     if (!user) {
@@ -171,9 +170,7 @@ export const loginUser = async (req, res) => {
             });
         }
 
-        // =========================
-        // FIND USER
-        // =========================
+
 
         const user = await User.findOne({ email });
 
@@ -184,9 +181,7 @@ export const loginUser = async (req, res) => {
             });
         }
 
-        // =========================
-        // CHECK PASSWORD
-        // =========================
+       
 
         const isMatch = await bcrypt.compare(
             password,
@@ -200,9 +195,7 @@ export const loginUser = async (req, res) => {
             });
         }
 
-        // =========================
-        // GENERATE OTP
-        // =========================
+  
 
         const otp = Math.floor(
             100000 + Math.random() * 900000
@@ -217,9 +210,7 @@ export const loginUser = async (req, res) => {
 
         await user.save();
 
-        // =========================
-        // CREATE TRANSPORTER
-        // =========================
+    
 
         const transporter = nodemailer.createTransport({
             service: "gmail",
@@ -230,9 +221,6 @@ export const loginUser = async (req, res) => {
             },
         });
 
-        // =========================
-        // SEND OTP EMAIL
-        // =========================
 
         await transporter.sendMail({
            from: `"Zoo App" <${process.env.EMAIL_USER}>`,
@@ -285,7 +273,7 @@ export const loginUser = async (req, res) => {
         const token = jwt.sign(
             { id: user._id },
             process.env.JWT_SECRET,
-            { expiresIn: "7 days" }
+            { expiresIn: "7d" }
         );
 
       return res.status(200).json({

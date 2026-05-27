@@ -7,9 +7,13 @@ import {
   FaTicketAlt,
   FaDollarSign,
   FaLayerGroup,
+  FaBoxes,
 } from "react-icons/fa";
 
-import { toast, ToastContainer } from "react-toastify";
+import {
+  toast,
+  ToastContainer,
+} from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -31,11 +35,15 @@ const TicketDetail = () => {
   } = useGetTicketsQuery();
 
   // ================= MUTATIONS =================
-  const [createTicket, { isLoading: createLoading }] =
-    useCreateTicketMutation();
+  const [
+    createTicket,
+    { isLoading: createLoading },
+  ] = useCreateTicketMutation();
 
-  const [updateTicket, { isLoading: updateLoading }] =
-    useUpdateTicketMutation();
+  const [
+    updateTicket,
+    { isLoading: updateLoading },
+  ] = useUpdateTicketMutation();
 
   const [deleteTicket] =
     useDeleteTicketMutation();
@@ -51,6 +59,7 @@ const TicketDetail = () => {
     name: "",
     description: "",
     price: "",
+    ticketQty: "",
     image: null,
   });
 
@@ -58,7 +67,10 @@ const TicketDetail = () => {
   const tickets = data?.data || [];
 
   // ================= HANDLE CHANGE =================
-  const handleChange = (field, value) => {
+  const handleChange = (
+    field,
+    value
+  ) => {
 
     setForm((prev) => ({
       ...prev,
@@ -66,7 +78,6 @@ const TicketDetail = () => {
     }));
   };
 
-  // ================= IMAGE CHANGE =================
   const handleImageChange = (e) => {
 
     const file = e.target.files[0];
@@ -78,8 +89,25 @@ const TicketDetail = () => {
         image: file,
       }));
 
-      setPreview(URL.createObjectURL(file));
+      setPreview(
+        URL.createObjectURL(file)
+      );
     }
+  };
+
+  const resetForm = () => {
+
+    setForm({
+      name: "",
+      description: "",
+      price: "",
+      ticketQty: "",
+      image: null,
+    });
+
+    setPreview(null);
+
+    setEditingId(null);
   };
 
   // ================= SUBMIT =================
@@ -87,11 +115,12 @@ const TicketDetail = () => {
 
     e.preventDefault();
 
-    // VALIDATION
+    // ================= VALIDATION =================
     if (
       !form.name.trim() ||
       !form.description.trim() ||
-      !form.price
+      !form.price ||
+      !form.ticketQty
     ) {
 
       return toast.error(
@@ -103,19 +132,27 @@ const TicketDetail = () => {
 
       const formData = new FormData();
 
-      // ================= IMPORTANT =================
-      // THESE FIELD NAMES MUST MATCH BACKEND
-      formData.append("name", form.name);
+      formData.append(
+        "name",
+        form.name
+      );
 
       formData.append(
         "description",
         form.description
       );
 
-      formData.append("price", form.price);
+      formData.append(
+        "price",
+        form.price
+      );
+
+      formData.append(
+        "ticketQty",
+        form.ticketQty
+      );
 
       // ================= IMAGE =================
-      // MULTER FIELD NAME MUST BE SAME
       if (form.image) {
 
         formData.append(
@@ -138,7 +175,7 @@ const TicketDetail = () => {
 
       } else {
 
-        // CREATE IMAGE REQUIRED
+        // ================= CREATE =================
         if (!form.image) {
 
           return toast.error(
@@ -146,24 +183,16 @@ const TicketDetail = () => {
           );
         }
 
-        await createTicket(formData).unwrap();
+        await createTicket(
+          formData
+        ).unwrap();
 
         toast.success(
           "Ticket created successfully"
         );
       }
 
-      // ================= RESET =================
-      setForm({
-        name: "",
-        description: "",
-        price: "",
-        image: null,
-      });
-
-      setPreview(null);
-
-      setEditingId(null);
+      resetForm();
 
       refetch();
 
@@ -185,14 +214,18 @@ const TicketDetail = () => {
 
     setForm({
       name: ticket.name || "",
-      description: ticket.description || "",
+      description:
+        ticket.description || "",
       price: ticket.price || "",
+      ticketQty:
+        ticket.ticketQty || "",
       image: null,
     });
 
-    // ================= IMPORTANT =================
-    // BACKEND FIELD IS ticketimage
-    setPreview(ticket.ticketimage);
+    // IMPORTANT
+    setPreview(
+      ticket.ticketimage?.url
+    );
 
     window.scrollTo({
       top: 0,
@@ -201,7 +234,9 @@ const TicketDetail = () => {
   };
 
   // ================= DELETE =================
-  const handleDelete = async (id) => {
+  const handleDelete = async (
+    id
+  ) => {
 
     const confirmDelete =
       window.confirm(
@@ -212,7 +247,9 @@ const TicketDetail = () => {
 
     try {
 
-      await deleteTicket(id).unwrap();
+      await deleteTicket(
+        id
+      ).unwrap();
 
       toast.success(
         "Ticket deleted successfully"
@@ -234,16 +271,7 @@ const TicketDetail = () => {
   // ================= CANCEL =================
   const handleCancel = () => {
 
-    setEditingId(null);
-
-    setForm({
-      name: "",
-      description: "",
-      price: "",
-      image: null,
-    });
-
-    setPreview(null);
+    resetForm();
   };
 
   return (
@@ -277,7 +305,7 @@ const TicketDetail = () => {
 
               </div>
 
-              {/* STATS */}
+              {/* ================= STATS ================= */}
               <div className="flex items-center gap-3">
 
                 <div className="rounded-2xl bg-green-50 px-5 py-3 border border-green-100">
@@ -318,7 +346,7 @@ const TicketDetail = () => {
                     </th>
 
                     <th className="py-4 px-4">
-                      Description
+                      Quantity
                     </th>
 
                     <th className="py-4 px-4">
@@ -334,6 +362,7 @@ const TicketDetail = () => {
 
                 <tbody>
 
+                  {/* ================= LOADING ================= */}
                   {isLoading ? (
 
                     <tr>
@@ -368,7 +397,8 @@ const TicketDetail = () => {
                       </td>
                     </tr>
 
-                  ) : tickets.length === 0 ? (
+                  ) : tickets.length ===
+                    0 ? (
 
                     <tr>
 
@@ -382,99 +412,122 @@ const TicketDetail = () => {
 
                   ) : (
 
-                    tickets.map((ticket) => (
+                    tickets.map(
+                      (ticket) => (
 
-                      <tr
-                        key={ticket._id}
-                        className="border-b border-gray-100 hover:bg-gray-50 transition"
-                      >
+                        <tr
+                          key={
+                            ticket._id
+                          }
+                          className="border-b border-gray-100 hover:bg-gray-50 transition"
+                        >
 
-                        {/* IMAGE + NAME */}
-                        <td className="py-4 px-4">
+                          {/* ================= IMAGE + NAME ================= */}
+                          <td className="py-4 px-4">
 
-                          <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-3">
 
-                            <img
-                              src={
-                                ticket.ticketimage ||
-                                "https://via.placeholder.com/100"
-                              }
-                              alt={ticket.name}
-                              className="h-14 w-14 rounded-2xl object-cover border border-gray-200"
-                            />
+                              <img
+                                src={
+                                  ticket
+                                    ?.ticketimage
+                                    ?.url ||
+                                  "https://via.placeholder.com/100"
+                                }
+                                alt={
+                                  ticket.name
+                                }
+                                className="h-14 w-14 rounded-2xl object-cover border border-gray-200"
+                              />
 
-                            <div>
+                              <div>
 
-                              <h3 className="font-semibold text-gray-900">
-                                {ticket.name}
-                              </h3>
+                                <h3 className="font-semibold text-gray-900">
+                                  {
+                                    ticket.name
+                                  }
+                                </h3>
 
-                              <p className="text-xs text-gray-500">
-                                ID: {ticket._id.slice(0, 8)}
-                              </p>
+                                </div>
+                            </div>
+                          </td>
+
+                          {/* ================= QUANTITY ================= */}
+                          <td className="ml-40 py-4 px-10 ">
+
+                            <div className="inline-flex items-center gap-4 rounded-2xl bg-blue-50 px-4 py-2 border border-blue-100">
+
+
+                              <div>
+
+                                <h4 className=" text-sm">
+                                  {
+                                    ticket.ticketQty
+                                  }
+                                </h4>
+
+                              </div>
 
                             </div>
-                          </div>
-                        </td>
 
-                        {/* DESCRIPTION */}
-                        <td className="py-4 px-4 text-gray-600 max-w-xs">
+                          </td>
 
-                          <p className="line-clamp-2">
-                            {ticket.description}
-                          </p>
+                          {/* ================= PRICE ================= */}
+                          <td className="py-4 px-4">
 
-                        </td>
+                            <div className="inline-flex items-center gap-1 rounded-full bg-green-50 px-3 py-1 text-[#00633E] font-semibold border border-green-100">
 
-                        {/* PRICE */}
-                        <td className="py-4 px-4">
+                              <FaDollarSign className="text-xs" />
 
-                          <div className="inline-flex items-center gap-1 rounded-full bg-green-50 px-3 py-1 text-[#00633E] font-semibold border border-green-100">
-
-                            <FaDollarSign className="text-xs" />
-
-                            {ticket.price}
-
-                          </div>
-                        </td>
-
-                        {/* ACTIONS */}
-                        <td className="py-4 px-4">
-
-                          <div className="flex items-center gap-2">
-
-                            {/* EDIT */}
-                            <button
-                              onClick={() =>
-                                handleEdit(ticket)
+                              {
+                                ticket.price
                               }
-                              className="flex items-center gap-1 rounded-full border border-[#00633E] px-3 py-1.5 text-xs font-medium text-[#00633E] transition hover:bg-[#00633E] hover:text-white"
-                            >
 
-                              <FaEdit className="text-[11px]" />
+                            </div>
+                          </td>
 
-                              Edit
+                          {/* ================= ACTIONS ================= */}
+                          <td className="py-4 px-4">
 
-                            </button>
+                            <div className="flex items-center gap-2">
 
-                            {/* DELETE */}
-                            <button
-                              onClick={() =>
-                                handleDelete(ticket._id)
-                              }
-                              className="flex items-center gap-1 rounded-full border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 transition hover:bg-red-100"
-                            >
+                              {/* EDIT */}
+                              <button
+                                onClick={() =>
+                                  handleEdit(
+                                    ticket
+                                  )
+                                }
+                                className="flex items-center gap-1 rounded-full border border-[#00633E] px-3 py-1.5 text-xs font-medium text-[#00633E] transition hover:bg-[#00633E] hover:text-white"
+                              >
 
-                              <FaTrash className="text-[11px]" />
+                                <FaEdit className="text-[11px]" />
 
-                              Delete
+                                Edit
 
-                            </button>
+                              </button>
 
-                          </div>
-                        </td>
-                      </tr>
-                    ))
+                              {/* DELETE */}
+                              <button
+                                onClick={() =>
+                                  handleDelete(
+                                    ticket._id
+                                  )
+                                }
+                                className="flex items-center gap-1 rounded-full border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 transition hover:bg-red-100"
+                              >
+
+                                <FaTrash className="text-[11px]" />
+
+                                Delete
+
+                              </button>
+
+                            </div>
+                          </td>
+                        </tr>
+                      )
+                    )
                   )}
                 </tbody>
               </table>
@@ -485,7 +538,7 @@ const TicketDetail = () => {
         {/* ================= RIGHT SIDE ================= */}
         <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm h-fit sticky top-5">
 
-          {/* TOP */}
+          {/* ================= TOP ================= */}
           <div className="mb-6">
 
             <div className="flex items-center gap-3">
@@ -515,7 +568,9 @@ const TicketDetail = () => {
           {/* ================= FORM ================= */}
           <form
             className="space-y-5"
-            onSubmit={handleSubmit}
+            onSubmit={
+              handleSubmit
+            }
           >
 
             {/* NAME */}
@@ -544,7 +599,9 @@ const TicketDetail = () => {
 
               <textarea
                 rows={4}
-                value={form.description}
+                value={
+                  form.description
+                }
                 onChange={(e) =>
                   handleChange(
                     "description",
@@ -575,6 +632,36 @@ const TicketDetail = () => {
               />
             </label>
 
+            {/* ================= TICKET QTY ================= */}
+            <label className="block text-sm font-medium text-gray-700">
+
+              Ticket Quantity
+
+              <div className="relative mt-2">
+
+                <input
+                  type="number"
+                  value={form.ticketQty}
+                  onChange={(e) =>
+                    handleChange(
+                      "ticketQty",
+                      e.target.value
+                    )
+                  }
+                  className="w-full rounded-2xl border border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50 px-4 py-3 pr-16 text-sm font-semibold outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10"
+                  placeholder="50"
+                />
+
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 rounded-xl bg-white px-3 py-2 shadow-sm border border-gray-100">
+
+                  <FaBoxes className="text-blue-600 text-sm" />
+
+                </div>
+
+              </div>
+
+            </label>
+
             {/* IMAGE */}
             <label className="block text-sm font-medium text-gray-700">
 
@@ -583,12 +670,14 @@ const TicketDetail = () => {
               <input
                 type="file"
                 accept="image/*"
-                onChange={handleImageChange}
+                onChange={
+                  handleImageChange
+                }
                 className="mt-2 w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm"
               />
             </label>
 
-            {/* PREVIEW */}
+            {/* ================= PREVIEW ================= */}
             {preview && (
 
               <div className="rounded-3xl overflow-hidden border border-gray-200">
@@ -602,7 +691,7 @@ const TicketDetail = () => {
               </div>
             )}
 
-            {/* BUTTONS */}
+            {/* ================= BUTTONS ================= */}
             <div className="flex flex-wrap gap-3 pt-2">
 
               <button
@@ -626,7 +715,9 @@ const TicketDetail = () => {
 
                 <button
                   type="button"
-                  onClick={handleCancel}
+                  onClick={
+                    handleCancel
+                  }
                   className="rounded-2xl border border-gray-300 bg-white px-5 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
                 >
                   Cancel
@@ -639,4 +730,5 @@ const TicketDetail = () => {
     </>
   );
 };
+
 export default TicketDetail;

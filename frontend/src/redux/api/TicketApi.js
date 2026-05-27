@@ -62,7 +62,8 @@ export const ticketApi = createApi({
 });
 
 export const {
-  useCreateTicketMutation,useGetTicketsQuery,
+  useCreateTicketMutation,
+  useGetTicketsQuery,
   useUpdateTicketMutation,
   useDeleteTicketMutation,
   useGetTicketQuery,
