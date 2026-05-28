@@ -2,7 +2,7 @@
 // FILE: TicketCart.jsx
 // ==============================
 
-import React from "react";
+import React, { useState } from "react";
 
 import {
   FaTimes,
@@ -11,6 +11,7 @@ import {
   FaMinus,
   FaPlus,
   FaMapMarkerAlt,
+  FaShoppingCart,
 } from "react-icons/fa";
 
 import {
@@ -59,8 +60,8 @@ function TicketCart({ close }) {
     tickets.reduce(
       (acc, item) =>
         acc +
-        item.ticketQty *
-          item.ticketId?.price,
+        (item.ticketQty || 1) *
+          (item.ticketId?.price || 0),
       0
     );
 
@@ -76,7 +77,7 @@ function TicketCart({ close }) {
           ).unwrap();
 
         toast.success(
-          response?.message
+          response?.message || "Ticket removed"
         );
 
         refetch();
@@ -122,7 +123,7 @@ function TicketCart({ close }) {
           ).unwrap();
 
         toast.success(
-          response?.message
+          response?.message || "Increased"
         );
 
         refetch();
@@ -162,7 +163,7 @@ function TicketCart({ close }) {
           ).unwrap();
 
         toast.success(
-          response?.message
+          response?.message || "Decreased"
         );
 
         refetch();
@@ -202,7 +203,7 @@ function TicketCart({ close }) {
 
               <div className="rounded-2xl bg-[#00633E] p-3 text-white">
 
-                <FaTicketAlt />
+                <FaShoppingCart />
 
               </div>
 
@@ -213,7 +214,7 @@ function TicketCart({ close }) {
                 </h2>
 
                 <p className="text-sm text-gray-500">
-                  {tickets.length} Items
+                  {tickets.length} {tickets.length === 1 ? 'Item' : 'Items'}
                 </p>
 
               </div>
@@ -223,7 +224,9 @@ function TicketCart({ close }) {
               onClick={close}
               className="rounded-full bg-red-100 p-3 text-red-500 transition-all duration-300 hover:bg-red-500 hover:text-white"
             >
+
               <FaTimes />
+
             </button>
           </div>
 
@@ -253,143 +256,151 @@ function TicketCart({ close }) {
                   Cart Empty
                 </h2>
 
+                <p className="mt-2 text-sm text-gray-500">
+                  Add tickets to your cart to see them here
+                </p>
+
               </div>
 
             ) : (
 
               tickets.map(
-                (item) => (
+                (item) => {
 
-                  <div
-                    key={item._id}
-                    className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-md"
-                  >
+                  const ticketPrice = item.ticketId?.price || 0;
+                  const ticketQty = item.ticketQty || 1;
+                  const itemTotal = ticketPrice * ticketQty;
 
-                    <div className="flex gap-4 p-4">
+                  return (
+                    <div
+                      key={item._id}
+                      className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-md transition-all duration-300 hover:shadow-lg"
+                    >
 
-                      {/* IMAGE */}
-                      <img
-                        src={
-                          item
-                            ?.ticketId
-                            ?.ticketimage
-                            ?.url ||
-                          "https://via.placeholder.com/300"
-                        }
-                        alt={
-                          item
-                            ?.ticketId
-                            ?.name
-                        }
-                        className="h-32 w-28 rounded-2xl object-cover"
-                      />
+                      <div className="flex gap-4 p-4">
 
-                      {/* CONTENT */}
-                      <div className="flex flex-1 flex-col justify-between">
+                        {/* IMAGE */}
+                        <img
+                          src={
+                            item
+                              ?.ticketId
+                              ?.ticketimage
+                              ?.url ||
+                            "https://via.placeholder.com/300"
+                          }
+                          alt={
+                            item
+                              ?.ticketId
+                              ?.name
+                          }
+                          className="h-32 w-28 rounded-2xl object-cover"
+                        />
 
-                        <div className="flex items-start justify-between">
+                        {/* CONTENT */}
+                        <div className="flex flex-1 flex-col justify-between">
 
-                          <div>
+                          <div className="flex items-start justify-between">
 
-                            <h2 className="text-xl font-black text-[#00633E]">
+                            <div>
 
-                              {
-                                item
-                                  ?.ticketId
-                                  ?.name
-                              }
+                              <h2 className="text-xl font-black text-[#00633E]">
 
-                            </h2>
+                                {
+                                  item
+                                    ?.ticketId
+                                    ?.name
+                                }
 
-                            <div className="mt-2 flex items-center gap-2 text-sm text-gray-500">
+                              </h2>
 
-                              <FaMapMarkerAlt />
+                              <div className="mt-2 flex items-center gap-2 text-sm text-gray-500">
 
-                              Safari Park
+                                <FaMapMarkerAlt />
+                                Safari Park
+
+                              </div>
+
+                              <div className="mt-1 text-xs text-gray-400">
+                                Unit Price: Rs {ticketPrice.toLocaleString()}
+                              </div>
 
                             </div>
-                          </div>
 
-                          {/* DELETE */}
-                          <button
-                            onClick={() =>
-                              handleDelete(
-                                item._id
-                              )
-                            }
-                            className="rounded-xl bg-red-100 p-2 text-red-500 transition-all duration-300 hover:bg-red-500 hover:text-white"
-                          >
-
-                            <FaTrash />
-
-                          </button>
-                        </div>
-
-                        {/* BOTTOM */}
-                        <div className="mt-5 flex items-center justify-between">
-
-                          {/* QTY */}
-                          <div className="flex items-center gap-3 rounded-2xl border bg-slate-100 px-3 py-2">
-
+                            {/* DELETE */}
                             <button
                               onClick={() =>
-                                handleDecrease(
-                                  item
+                                handleDelete(
+                                  item._id
                                 )
                               }
-                              className="rounded-lg bg-white p-2 shadow"
+                              className="rounded-xl bg-red-100 p-2 text-red-500 transition-all duration-300 hover:bg-red-500 hover:text-white"
                             >
 
-                              <FaMinus size={12} />
-
-                            </button>
-
-                            <span className="min-w-[25px] text-center text-lg font-bold">
-
-                              {
-                                item.ticketQty
-                              }
-
-                            </span>
-
-                            <button
-                              onClick={() =>
-                                handleIncrease(
-                                  item
-                                )
-                              }
-                              className="rounded-lg bg-white p-2 shadow"
-                            >
-
-                              <FaPlus size={12} />
+                              <FaTrash />
 
                             </button>
                           </div>
 
-                          {/* PRICE */}
-                          <div className="text-right">
+                          {/* BOTTOM */}
+                          <div className="mt-5 flex items-center justify-between">
 
-                            <p className="text-xs text-gray-400">
-                              Total
-                            </p>
+                            {/* QTY */}
+                            <div className="flex items-center gap-3 rounded-2xl border bg-slate-100 px-3 py-2">
 
-                            <h2 className="text-2xl font-black text-[#00633E]">
+                              <button
+                                onClick={() =>
+                                  handleDecrease(
+                                    item
+                                  )
+                                }
+                                disabled={ticketQty <= 1}
+                                className="rounded-lg bg-white p-2 shadow disabled:opacity-50 disabled:cursor-not-allowed"
+                              >
 
-                              Rs{" "}
-                              {(
-                                item
-                                  ?.ticketId
-                                  ?.price *
-                                item.ticketQty
-                              ).toLocaleString()}
+                                <FaMinus size={12} />
 
-                            </h2>
+                              </button>
+
+                              <span className="min-w-[25px] text-center text-lg font-bold">
+
+                                {ticketQty}
+
+                              </span>
+
+                              <button
+                                onClick={() =>
+                                  handleIncrease(
+                                    item
+                                  )
+                                }
+                                disabled={!item.ticketId?.ticketQty || item.ticketId.ticketQty <= 0}
+                                className="rounded-lg bg-white p-2 shadow disabled:opacity-50 disabled:cursor-not-allowed"
+                              >
+
+                                <FaPlus size={12} />
+
+                              </button>
+                            </div>
+
+                            {/* PRICE */}
+                            <div className="text-right">
+
+                              <p className="text-xs text-gray-400">
+                                Total
+                              </p>
+
+                              <h2 className="text-2xl font-black text-[#00633E]">
+
+                                Rs {itemTotal.toLocaleString()}
+
+                              </h2>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                )
+                  );
+                }
               )
             )}
           </div>
@@ -409,8 +420,7 @@ function TicketCart({ close }) {
 
                   <h2 className="text-3xl font-black text-[#00633E]">
 
-                    Rs{" "}
-                    {total.toLocaleString()}
+                    Rs {total.toLocaleString()}
 
                   </h2>
 

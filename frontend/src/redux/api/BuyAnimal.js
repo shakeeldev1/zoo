@@ -10,7 +10,6 @@ export const buyAnimalApi = createApi({
 
     prepareHeaders: (headers) => {
       const token = localStorage.getItem("token");
-      console.log("Token from localStorage:", token); 
       if (token) {
         headers.set("Authorization", `Bearer ${token}`);
       }
@@ -19,11 +18,9 @@ export const buyAnimalApi = createApi({
     },
   }),
 
-  tagTypes: ["BuyAnimal"],
+  tagTypes: ["BuyAnimal", "Animal"],
 
   endpoints: (builder) => ({
-
-    // ✅ GET CART ITEMS
     getBuyAnimals: builder.query({
       query: () => ({
         url: "/getbuyanimal",
@@ -33,7 +30,6 @@ export const buyAnimalApi = createApi({
       providesTags: ["BuyAnimal"],
     }),
 
-    // ✅ GET ALL CART ITEMS
     getAllBuyAnimals: builder.query({
       query: () => ({
         url: "/getallbuyanimal",
@@ -42,46 +38,44 @@ export const buyAnimalApi = createApi({
       providesTags: ["BuyAnimal"],
     }),
 
-    // ✅ ADD TO CART
- addBuyAnimal: builder.mutation({
-  query: (animalId) => ({
-    url: `/buyanimal/${animalId}`,
-    method: "POST",
-  }),
+    addBuyAnimal: builder.mutation({
+      query: ({ animalId, cartQty }) => ({
+        url: `/buyanimal/${animalId}`,
+        method: "POST",
+        body: { cartQty },
+      }),
 
-      invalidatesTags: ["BuyAnimal"],
+      invalidatesTags: ["BuyAnimal", "Animal"],
     }),
 
-    // ✅ DELETE CART ITEM
     deleteBuyAnimal: builder.mutation({
       query: (id) => ({
         url: `/deletebuyanimal/${id}`,
         method: "DELETE",
       }),
 
-      invalidatesTags: ["BuyAnimal"],
+      invalidatesTags: ["BuyAnimal", "Animal"],
     }),
 
-    // ✅ INCREASE QUANTITY
     increaseBuyAnimalQty: builder.mutation({
-      query: (id) => ({
+      query: ({ id, quantity }) => ({
         url: `/increasebuyanimalqty/${id}`,
         method: "PUT",
+        body: { quantity },
       }),
 
-      invalidatesTags: ["BuyAnimal"],
+      invalidatesTags: ["BuyAnimal", "Animal"],
     }),
 
-    // ✅ DECREASE QUANTITY
     decreaseBuyAnimalQty: builder.mutation({
-      query: (id) => ({
+      query: ({ id, quantity }) => ({
         url: `/decreasebuyanimalqty/${id}`,
         method: "PUT",
+        body: { quantity },
       }),
 
-      invalidatesTags: ["BuyAnimal"],
+      invalidatesTags: ["BuyAnimal", "Animal"],
     }),
-
   }),
 });
 

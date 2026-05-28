@@ -26,7 +26,7 @@ import {
 import "react-toastify/dist/ReactToastify.css";
 
 import {
-  useGetTicketsQuery,
+  useGetAllTicketsQuery,
 } from "../../redux/api/TicketApi";
 
 import {
@@ -40,7 +40,7 @@ const TicketDetail = () => {
     data,
     isLoading,
     isError,
-  } = useGetTicketsQuery();
+  } = useGetAllTicketsQuery();
 
   // ================= BUY API =================
   const [
@@ -135,16 +135,11 @@ const TicketDetail = () => {
           return;
         }
 
-        // ================= FORM DATA =================
-        const formData = {
-          ticketQty: 1,
-        };
-
         // ================= API CALL =================
         const response =
           await createBuyTicket({
             ticketId: ticket._id,
-            formData,
+            ticketQty: 1,
           }).unwrap();
 
         // ================= SUCCESS =================

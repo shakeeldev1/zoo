@@ -72,6 +72,15 @@ export const buyTicketApi =
           ],
         }),
 
+      // ================= GET ALL BUY TICKETS =================
+      getAllBuyTickets: builder.query({
+        query: () => ({
+          url: "/getallbuytickets",
+          method: "GET",
+        }),
+        providesTags: ["BuyTicket"],
+      }),
+
       // ================= GET BY ID =================
       getBuyTicketById:
         builder.query({
@@ -148,6 +157,7 @@ export const {
   useDeleteBuyTicketMutation,
   useIncreaseBuyTicketQuantityMutation,
   useDecreaseBuyTicketQuantityMutation,
+  useGetAllBuyTicketsQuery,
 } = buyTicketApi;
 
 export default buyTicketApi;

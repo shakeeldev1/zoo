@@ -60,9 +60,8 @@ const Cart = ({ close }) => {
   // ================= INCREASE =================
   const handleIncrease = async (id) => {
     try {
-
       const res =
-        await increaseBuyAnimalQty(id).unwrap();
+        await increaseBuyAnimalQty({ id, quantity: 1 }).unwrap();
 
       toast.success(
         res?.message || "Quantity increased"
@@ -95,7 +94,7 @@ const Cart = ({ close }) => {
     try {
 
       const res =
-        await decreaseBuyAnimalQty(id).unwrap();
+        await decreaseBuyAnimalQty({ id, quantity: 1 }).unwrap();
 
       toast.success(
         res?.message || "Quantity decreased"
@@ -297,7 +296,7 @@ const Cart = ({ close }) => {
                           "https://via.placeholder.com/150"
                         }
                         alt={item?.animal?.name}
-                        className="w-28 h-28 object-cover rounded-2xl border border-slate-200"
+                        className="w-20 h-20 object-cover rounded-2xl border border-slate-200"
                       />
 
                     </div>

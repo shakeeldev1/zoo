@@ -1,35 +1,82 @@
-import BuyAnimal from "../model/BuyAnimalModel.js"
+import BuyAnimal from "../model/BuyAnimalModel.js";
+import Animal from "../model/AnimalModel.js";
+
+// ======================================================
+// CREATE/UPDATE BUY ANIMAL
+// ======================================================
 export const addBuyAnimal = async (req, res) => {
-
   try {
-
-    // ✅ USER ID FROM TOKEN
     const userId = req.userId;
-
-    // ✅ ANIMAL ID FROM PARAMS
     const { animalId } = req.params;
+    const { cartQty } = req.body;
 
- 
+    // ================= VALIDATION =================
+    if (!cartQty || cartQty < 1) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide valid quantity",
+      });
+    }
 
-    // ✅ CHECK EXISTING
+    // ================= FIND ANIMAL =================
+    const animal = await Animal.findById(animalId);
+    if (!animal) {
+      return res.status(404).json({
+        success: false,
+        message: "Animal not found",
+      });
+    }
+
+    // ================= STOCK CHECK =================
+    if (animal.quantity < cartQty) {
+      return res.status(400).json({
+        success: false,
+        message: "Not enough animals available",
+      });
+    }
+
+    // ================= CHECK EXISTING =================
     const existingItem = await BuyAnimal.findOne({
       userId,
       animalId,
     });
 
+    // ================= IF ALREADY EXISTS - INCREASE QTY =================
     if (existingItem) {
+      const newQty = existingItem.cartQty + cartQty;
 
-      return res.status(400).json({
-        success: false,
-        message: "Animal already exists in cart",
+      // Check if new total exceeds stock
+      if (animal.quantity < newQty) {
+        return res.status(400).json({
+          success: false,
+          message: "Stock limit reached for this animal",
+        });
+      }
+
+      // Reduce animal stock
+      animal.quantity -= cartQty;
+      await animal.save();
+
+      existingItem.cartQty = newQty;
+      await existingItem.save();
+
+      return res.status(200).json({
+        success: true,
+        message: "Animal quantity updated in cart",
+        data: existingItem,
       });
     }
 
-    // ✅ CREATE NEW
+    // ================= CREATE NEW =================
     const newItem = await BuyAnimal.create({
       userId,
       animalId,
+      cartQty,
     });
+
+    // ================= UPDATE STOCK =================
+    animal.quantity -= cartQty;
+    await animal.save();
 
     return res.status(201).json({
       success: true,
@@ -38,9 +85,7 @@ export const addBuyAnimal = async (req, res) => {
     });
 
   } catch (err) {
-
-    console.log(err);
-
+    console.log("ADD BUY ANIMAL ERROR:", err);
     return res.status(500).json({
       success: false,
       message: err.message,
@@ -140,8 +185,7 @@ export const getAllBuyAnimal = async (req, res) => {
       .sort({ createdAt: -1 });
     return res.status(200).json({
       success: true,
-      count: items.length,
-      items,
+      data: items,
     });
   } catch (err) {
     console.log("GET ALL BUY ANIMAL ERROR:", err);
@@ -155,59 +199,86 @@ export const getAllBuyAnimal = async (req, res) => {
 
 export const deleteBuyAnimal = async (req, res) => {
   try {
-
     const { id } = req.params;
+
+    const cartItem = await BuyAnimal.findById(id);
+    if (!cartItem) {
+      return res.status(404).json({
+        success: false,
+        message: "Cart item not found",
+      });
+    }
+
+    // Restore animal stock
+    await Animal.findByIdAndUpdate(
+      cartItem.animalId,
+      { $inc: { quantity: cartItem.cartQty } }
+    );
 
     await BuyAnimal.findByIdAndDelete(id);
 
     return res.status(200).json({
       success: true,
-      message: "Item removed successfully"
+      message: "Item removed successfully",
     });
-
   } catch (err) {
     return res.status(500).json({
       success: false,
-      message: err.message
+      message: err.message,
     });
   }
 };
 
 export const increaseBuyAnimalQty = async (req, res) => {
   try {
-
     const { id } = req.params;
-    const item = await BuyAnimal.findById(id)
-      .populate("animalId");
+    const { quantity } = req.body;
+
+    if (!quantity || quantity < 1) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide valid quantity",
+      });
+    }
+
+    const item = await BuyAnimal.findById(id).populate("animalId");
     if (!item) {
       return res.status(404).json({
         success: false,
         message: "Cart item not found",
       });
     }
-    const stock = item?.animalId?.quantity || 0;
 
-    if (item.cartQty >= stock) {
+    const animal = item.animalId;
+    if (!animal) {
+      return res.status(404).json({
+        success: false,
+        message: "Animal not found",
+      });
+    }
+
+    // Check stock availability
+    if (animal.quantity < quantity) {
       return res.status(400).json({
         success: false,
         message: "Stock limit reached",
       });
     }
 
-    item.cartQty += 1;
+    // Update
+    item.cartQty += quantity;
+    animal.quantity -= quantity;
 
     await item.save();
+    await animal.save();
 
     return res.status(200).json({
       success: true,
       message: "Quantity increased successfully",
       cartQty: item.cartQty,
     });
-
   } catch (err) {
-
     console.log("INCREASE ERROR:", err);
-
     return res.status(500).json({
       success: false,
       message: err.message,
@@ -217,11 +288,10 @@ export const increaseBuyAnimalQty = async (req, res) => {
 
 export const decreaseBuyAnimalQty = async (req, res) => {
   try {
-
     const { id } = req.params;
+    const { quantity: decreaseQty } = req.body;
 
-    const item = await BuyAnimal.findById(id);
-
+    const item = await BuyAnimal.findById(id).populate("animalId");
     if (!item) {
       return res.status(404).json({
         success: false,
@@ -229,18 +299,26 @@ export const decreaseBuyAnimalQty = async (req, res) => {
       });
     }
 
-    // ✅ STOP AT 1
+    // Validate: can't decrease below 1
     if (item.cartQty <= 1) {
-
       return res.status(400).json({
         success: false,
         message: "Minimum quantity is 1",
       });
     }
 
-    // ✅ DECREASE
-    item.cartQty -= 1;
+    // Use the quantity to decrease or default to 1
+    const qtyToDecrease = decreaseQty && decreaseQty > 0 ? Math.min(decreaseQty, item.cartQty - 1) : 1;
 
+    // Restore animal stock
+    const animal = item.animalId;
+    if (animal) {
+      animal.quantity += qtyToDecrease;
+      await animal.save();
+    }
+
+    // Decrease
+    item.cartQty -= qtyToDecrease;
     await item.save();
 
     return res.status(200).json({
@@ -248,9 +326,38 @@ export const decreaseBuyAnimalQty = async (req, res) => {
       message: "Quantity decreased",
       cartQty: item.cartQty,
     });
-
   } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
 
+// ======================================================
+// GET SINGLE BUY ANIMAL
+// ======================================================
+export const getBuyAnimalById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const buyAnimal = await BuyAnimal.findById(id)
+      .populate("animalId", "name price quantity description animalimage")
+      .populate("userId", "name email");
+
+    if (!buyAnimal) {
+      return res.status(404).json({
+        success: false,
+        message: "Buy animal not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: buyAnimal,
+    });
+  } catch (err) {
+    console.log("GET BUY ANIMAL BY ID ERROR:", err);
     return res.status(500).json({
       success: false,
       message: err.message,

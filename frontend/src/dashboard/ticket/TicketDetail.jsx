@@ -18,7 +18,7 @@ import {
 import "react-toastify/dist/ReactToastify.css";
 
 import {
-  useGetTicketsQuery,
+  useGetAllTicketsQuery,
   useUpdateTicketMutation,
   useDeleteTicketMutation,
   useCreateTicketMutation,
@@ -32,7 +32,7 @@ const TicketDetail = () => {
     isLoading,
     isError,
     refetch,
-  } = useGetTicketsQuery();
+  } = useGetAllTicketsQuery();
 
   // ================= MUTATIONS =================
   const [

@@ -26,10 +26,8 @@ function BuyAnimal() {
 
   // ================= ADD TO CART HANDLER =================
   const handleAddToCart = async (animalId) => {
-
     try {
-
-      const response = await addBuyAnimal(animalId).unwrap();
+      const response = await addBuyAnimal({ animalId, cartQty: 1 }).unwrap();
 
       toast.success(
         response?.message || "Animal added into cart"

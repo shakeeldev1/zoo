@@ -2,13 +2,13 @@ import mongoose from "mongoose";
 
 const BuyTicketSchema = new mongoose.Schema(
   {
-    userId: {
+userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "user",
       required: true,
     },
 
-    ticketId: {
+ticketId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Ticket",
       required: true,
@@ -18,12 +18,7 @@ const BuyTicketSchema = new mongoose.Schema(
       type: Number,
       required: true,
       default: 1,
-    },
-
-    // ================= ORIGINAL STOCK =================
-    originalQty: {
-      type: Number,
-      required: true,
+      min: 1,
     },
   },
   {

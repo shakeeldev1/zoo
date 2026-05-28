@@ -1,5 +1,6 @@
 import BuyTicket from "../model/BuyTicketModel.js";
 import Ticket from "../model/TicketModel.js";
+import User from "../model/UserModel.js";
 
 // ======================================================
 // CREATE BUY TICKET
@@ -86,7 +87,6 @@ export const addBuyTicket = async (
         userId,
         ticketId,
         ticketQty,
-        originalQty: ticket.ticketQty,
       });
 
     // ================= UPDATE STOCK =================
@@ -243,12 +243,10 @@ export const increaseBuyTicketQuantity =
         });
       }
 
-      await buyTicket.populate(
-        "ticketId"
-      );
+      await buyTicket.populate("ticketId");
 
-      const ticket =
-        buyTicket.ticketId;
+       const ticket =
+         buyTicket.ticketId;
 
       if (!ticket) {
         return res.status(404).json({
@@ -336,12 +334,10 @@ export const decreaseBuyTicketQuantity =
         });
       }
 
-      await buyTicket.populate(
-        "ticketId"
-      );
+      await buyTicket.populate("ticketId");
 
-      const ticket =
-        buyTicket.ticketId;
+       const ticket =
+         buyTicket.ticketId;
 
       buyTicket.ticketQty -= quantity;
 
@@ -418,6 +414,45 @@ export const deleteBuyTicket = async (
   } catch (error) {
     console.log(
       "DELETE BUY TICKET ERROR:",
+      error
+    );
+
+    return res.status(500).json({
+      success: false,
+      message:
+        error.message ||
+        "Something went wrong",
+    });
+  }
+};
+
+// ======================================================
+// GET ALL BUY TICKETS (ADMIN)
+// ======================================================
+
+export const getAllBuyTickets = async (
+  req,
+  res
+) => {
+  try {
+    const buyTickets =
+      await BuyTicket.find()
+        .populate(
+          "ticketId",
+          "name price location date ticketimage ticketQty"
+        )
+        .populate(
+          "userId",
+          "name email"
+        );
+
+    return res.status(200).json({
+      success: true,
+      data: buyTickets,
+    });
+  } catch (error) {
+    console.log(
+      "GET ALL BUY TICKETS ERROR:",
       error
     );
 
