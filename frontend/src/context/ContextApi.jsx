@@ -101,8 +101,8 @@ const ContextApi = ({ children }) => {
 
   // ================= LOGOUT =================
   const logoutUser = () => {
-
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
 
     setToken(null);
 

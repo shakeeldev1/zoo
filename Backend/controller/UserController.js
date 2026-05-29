@@ -323,3 +323,119 @@ export const logoutUser = (req, res) => {
     res.status(200).json({ message: "Logout successful" });
 };
 
+export const getProfile = async (req, res) => {
+    try {
+        const token = req.headers.authorization?.split(" ")[1];
+        
+        if (!token) {
+            return res.status(401).json({
+                success: false,
+                message: "No token provided",
+            });
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.id).select("-password -otp -otpExpires");
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Profile retrieved successfully",
+            data: user,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Server error",
+            error: error.message,
+        });
+    }
+};
+
+export const updateProfile = async (req, res) => {
+    try {
+        const token = req.headers.authorization?.split(" ")[1];
+        
+        if (!token) {
+            return res.status(401).json({
+                success: false,
+                message: "No token provided",
+            });
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const { name, email, password } = req.body;
+        
+        const updateData = {};
+        if (name) updateData.name = name;
+        if (email) updateData.email = email;
+        if (password) {
+            updateData.password = await bcrypt.hash(password, 10);
+        }
+
+        const user = await User.findByIdAndUpdate(decoded.id, updateData, {
+            returnDocument: 'after',
+            runValidators: true,
+        }).select("-password -otp -otpExpires");
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Profile updated successfully",
+            data: user,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Server error",
+            error: error.message,
+        });
+    }
+};
+
+export const deleteProfile = async (req, res) => {
+    try {
+        const token = req.headers.authorization?.split(" ")[1];
+        
+        if (!token) {
+            return res.status(401).json({
+                success: false,
+                message: "No token provided",
+            });
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findByIdAndDelete(decoded.id);
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Profile deleted successfully",
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Server error",
+            error: error.message,
+        });
+    }
+};
+
