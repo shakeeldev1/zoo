@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Model from "../common/Model";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 import {
@@ -27,8 +27,14 @@ const Navbar = ({ openCart, openTicketCart }) => {
   const [showModal, setShowModal] =
     useState(false);
 
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [userData, setUserData] = useState({ name: '', email: '' });
+  const profileDropdownRef = useRef(null);
+
   const { isLogin, logoutUser } =
     useAppContext();
+
+  const navigate = useNavigate();
 
   // ================= AOS =================
   useEffect(() => {
@@ -81,6 +87,41 @@ const Navbar = ({ openCart, openTicketCart }) => {
     setIsOpen(false);
 
   };
+
+  // ================= PROFILE HANDLERS =================
+  const handleProfileClick = () => {
+    navigate("/profile");
+    setIsProfileOpen(false);
+  };
+
+  // ================= GET INITIALS =================
+  const getInitials = (name) => {
+    if (!name) return 'A'
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+  }
+
+  // ================= CLOSE DROPDOWN ON OUTSIDE CLICK =================
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(e.target)) {
+        setIsProfileOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  // ================= LOAD USER DATA =================
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user')
+    if (storedUser) {
+      try {
+        setUserData(JSON.parse(storedUser))
+      } catch (e) {
+        // Ignore parse errors
+      }
+    }
+  }, [isLogin])
 
   return (
     <>
@@ -189,14 +230,47 @@ const Navbar = ({ openCart, openTicketCart }) => {
                   </>
                 ) : (
                   <>
-                    {/* LOGOUT */}
-                    <button
-                      onClick={handleLogout}
-                      className="flex items-center gap-2 whitespace-nowrap rounded-xl bg-red-600 px-5 py-3 font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-red-700"
-                    >
-                      <FaSignOutAlt className="text-xl" />
-                      Logout
-                    </button>
+                    {/* PROFILE DROPDOWN */}
+                    <div className="relative" ref={profileDropdownRef}>
+                      <button
+                        onClick={() => setIsProfileOpen(!isProfileOpen)}
+                        className="flex items-center gap-2 whitespace-nowrap rounded-xl bg-white/10 px-3 py-2 text-white transition-all duration-300 hover:bg-white/20"
+                      >
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-green-600 flex items-center justify-center text-white font-bold text-xs">
+                          {getInitials(userData?.name)}
+                        </div>
+                        <span className="hidden sm:inline-block text-sm font-medium">
+                          {userData?.name?.split(' ')[0] || 'User'}
+                        </span>
+                      </button>
+
+                      {isProfileOpen && (
+                        <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-200 py-2 z-50 overflow-hidden">
+                          <div className="px-4 py-3 border-b border-gray-100">
+                            <p className="text-sm font-semibold text-gray-800">{userData?.name}</p>
+                            <p className="text-xs text-gray-500">{userData?.email}</p>
+                          </div>
+                          
+                          <button
+                            onClick={handleProfileClick}
+                            className="w-full px-4 py-2.5 text-left hover:bg-gray-50 transition-colors flex items-center gap-3 text-gray-700 font-medium"
+                          >
+                            <FaUser className="text-[#00633E]" />
+                            My Profile
+                          </button>
+                          
+                          <hr className="my-1" />
+                          
+                          <button
+                            onClick={handleLogout}
+                            className="w-full px-4 py-2.5 text-left hover:bg-red-50 transition-colors flex items-center gap-3 text-red-600 font-medium"
+                          >
+                            <FaSignOutAlt className="text-red-600" />
+                            Logout
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </>
                 )}
               </div>
@@ -328,16 +402,17 @@ const Navbar = ({ openCart, openTicketCart }) => {
                 </>
               ) : (
                 <>
-                  {/* WELCOME */}
-                  <div className="flex items-center justify-center gap-2 rounded-xl bg-white/10 py-2 text-white">
-
+                  {/* PROFILE */}
+                  <button
+                    onClick={() => {
+                      navigate("/profile");
+                      setIsOpen(false);
+                    }}
+                    className="flex items-center justify-center gap-2 rounded-xl bg-white/10 py-2 text-white"
+                  >
                     <FaUser className="text-sm" />
-
-                    <span className="text-sm font-medium">
-                      Welcome!
-                    </span>
-
-                  </div>
+                    My Profile
+                  </button>
 
                   {/* LOGOUT */}
                   <button
