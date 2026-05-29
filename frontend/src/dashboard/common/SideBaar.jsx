@@ -6,7 +6,6 @@ import {
   ShoppingCart,
   Ticket,
   MessageSquare,
-  Settings,
   LogOut,
   ChevronDown,
   X
@@ -20,8 +19,7 @@ const SideBaar = ({ isOpen, toggleSidebar }) => {
     { label: 'Users', icon: Users, path: '/dashboard/users' },
     { label: 'Animals', icon: Users, path: '/dashboard/animals' },
     { label: 'Tickets', icon: Ticket, path: '/dashboard/tickets' },
-    { label: 'Reviews', icon: MessageSquare, path: '/dashboard/reviews' },
-    { label: 'Settings', icon: Settings, path: '/dashboard/settings' }
+    { label: 'Reviews', icon: MessageSquare, path: '/dashboard/reviews' }
   ]
 
   const handleLogout = () => {

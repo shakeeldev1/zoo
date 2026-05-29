@@ -115,6 +115,11 @@ export default function LoginForm() {
       if (res?.token) {
         localStorage.setItem("token", res?.token);
         
+        // Store user data for profile display
+        if (res?.user) {
+          localStorage.setItem("user", JSON.stringify(res.user));
+        }
+        
         // LOGIN STATE TRUE
         setIsLogin(true);
 

@@ -21,69 +21,42 @@ import Users from './pages/dashboard/Users'
 import Reviews from './pages/dashboard/Reviews'
 import AnimalsPage from './pages/dashboard/Animals'
 import Tickets from './pages/dashboard/Tickets'
+import ProfilePage from './components/profile/ProfilePage'
+import Settings from './dashboard/pages/Settings'
 import VisitSchools from './components/home/VisitSchools'
 import ScrollToTop from './components/common/ScrollToTop'
 import TicketCart from './components/common/TicketCart'
 import TicketPages from './pages/TicketPages'
 
-// ============================================
-// MAIN LAYOUT - User facing pages
-// ============================================
 const MainLayout = () => {
-
-  // ================= STATES =================
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isTicketCartOpen, setIsTicketCartOpen] = useState(false);
 
-  const [isTicketCartOpen, setIsTicketCartOpen] =
-    useState(false);
-
-  // ================= CART =================
   const openCart = () => {
-
     setIsTicketCartOpen(false);
     setIsCartOpen(true);
-
   };
 
   const closeCart = () => setIsCartOpen(false);
 
-  // ================= TICKET CART =================
   const openTicketCart = () => {
-
     setIsCartOpen(false);
     setIsTicketCartOpen(true);
-
   };
 
-  const closeTicketCart = () =>
-    setIsTicketCartOpen(false);
+  const closeTicketCart = () => setIsTicketCartOpen(false);
 
   return (
     <div className="overflow-hidden">
-
       <ScrollToTop />
-
-      <Navbar
-        openCart={openCart}
-        openTicketCart={openTicketCart}
-      />
-
-      {isCartOpen && (
-        <Cart close={closeCart} />
-      )}
-
-      {isTicketCartOpen && (
-        <TicketCart close={closeTicketCart} />
-      )}
-
+      <Navbar openCart={openCart} openTicketCart={openTicketCart} />
+      {isCartOpen && <Cart close={closeCart} />}
+      {isTicketCartOpen && <TicketCart close={closeTicketCart} />}
       <Outlet />
-
       <Footer />
-
     </div>
   );
 };
-
 
 const AdminLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
@@ -94,15 +67,9 @@ const AdminLayout = () => {
 
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
       <DashboardSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-
-      {/* Main Content Area */}
       <div className="flex-1 flex flex-col overflow-hidden md:ml-64">
-        {/* Navbar */}
         <DashboardNavbar toggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
-
-        {/* Page Content */}
         <main className="flex-1 overflow-y-auto pt-16 md:pt-20 pb-8">
           <div className="p-4 md:p-8">
             <Outlet />
@@ -113,76 +80,7 @@ const AdminLayout = () => {
   )
 }
 
-// ============================================
-// PLACEHOLDER COMPONENTS FOR NEW ROUTES
-// ============================================
-// Animals Management
-const AnimalsList = () => (
-  <div className="bg-white rounded-lg shadow p-6">
-    <h2 className="text-2xl font-bold mb-4">Animals Management</h2>
-    <p className="text-gray-600">Coming soon...</p>
-  </div>
-)
-
-const AddAnimal = () => (
-  <div className="bg-white rounded-lg shadow p-6">
-    <h2 className="text-2xl font-bold mb-4">Add New Animal</h2>
-    <p className="text-gray-600">Coming soon...</p>
-  </div>
-)
-
-const AnimalCategories = () => (
-  <div className="bg-white rounded-lg shadow p-6">
-    <h2 className="text-2xl font-bold mb-4">Animal Categories</h2>
-    <p className="text-gray-600">Coming soon...</p>
-  </div>
-)
-
-// Shop Management
-const BuyAnimalsList = () => (
-  <div className="bg-white rounded-lg shadow p-6">
-    <h2 className="text-2xl font-bold mb-4">Buy Animals</h2>
-    <p className="text-gray-600">Coming soon...</p>
-  </div>
-)
-
-const OrdersList = () => (
-  <div className="bg-white rounded-lg shadow p-6">
-    <h2 className="text-2xl font-bold mb-4">Orders</h2>
-    <p className="text-gray-600">Coming soon...</p>
-  </div>
-)
-
-const Inventory = () => (
-  <div className="bg-white rounded-lg shadow p-6">
-    <h2 className="text-2xl font-bold mb-4">Inventory</h2>
-    <p className="text-gray-600">Coming soon...</p>
-  </div>
-)
-
-// Reviews Management
-// (page now provided in src/pages/dashboard/Reviews.jsx)
-
-// Admin Settings & Profile
-const AdminProfile = () => (
-  <div className="bg-white rounded-lg shadow p-6">
-    <h2 className="text-2xl font-bold mb-4">My Profile</h2>
-    <p className="text-gray-600">Coming soon...</p>
-  </div>
-)
-
-const AdminSettings = () => (
-  <div className="bg-white rounded-lg shadow p-6">
-    <h2 className="text-2xl font-bold mb-4">Settings</h2>
-    <p className="text-gray-600">Coming soon...</p>
-  </div>
-)
-
-// ============================================
-// ROUTER CONFIGURATION
-// ============================================
 const router = createBrowserRouter([
-  // User-facing routes
   {
     element: <MainLayout />,
     children: [
@@ -195,32 +93,20 @@ const router = createBrowserRouter([
       { path: "/contact", element: <Contact /> },
       { path: "/events", element: <Events /> },
       { path: "/buyanimal", element: <BuyAnimalPage /> },
-      { path: "/buyticket", element: <TicketPages /> }
+      { path: "/buyticket", element: <TicketPages /> },
+      { path: "/profile", element: <ProfilePage /> }
     ]
   },
-  // Admin/Dashboard routes
   {
     element: <AdminLayout />,
     children: [
-      // Dashboard
       { path: "/dashboard", element: <OverviewPage /> },
-      
-      // Users Management
       { path: '/dashboard/users', element: <Users /> },
-      
-      // Animals Management
       { path: '/dashboard/animals', element: <AnimalsPage /> },
-      
-      
-      // Tickets Management
       { path: '/dashboard/tickets', element: <Tickets /> },
-      
-      // Reviews Management
       { path: '/dashboard/reviews', element: <Reviews/> },
-      
-      // Admin Profile & Settings
-      { path: '/dashboard/profile', element: <AdminProfile /> },
-      { path: '/dashboard/settings', element: <AdminSettings /> }
+      { path: '/dashboard/profile', element: <Settings /> },
+      { path: '/dashboard/settings', element: <Settings /> }
     ]
   }
 ])
