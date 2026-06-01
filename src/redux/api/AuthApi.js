@@ -1,19 +1,22 @@
-// src/redux/api/AuthApi.js
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const AuthApi = createApi({
   reducerPath: "AuthApi",
   baseQuery: fetchBaseQuery({
     baseUrl: "http://localhost:5000/v1/api/users",
-    credentials: "include", // Important for cookies/auth
+    credentials: "include",
     prepareHeaders: (headers) => {
-      // Add any custom headers here
       headers.set("Content-Type", "application/json");
+      const token = localStorage.getItem("token");
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      }
       return headers;
     },
   }),
-  // Add tag types for cache invalidation
-  tagTypes: ["User"],
+
+  tagTypes: ["User", "Profile"],
+
   endpoints: (builder) => ({
     registerUser: builder.mutation({
       query: (userData) => ({
@@ -21,9 +24,9 @@ export const AuthApi = createApi({
         method: "POST",
         body: userData,
       }),
-      // Invalidate cache if needed
       invalidatesTags: ["User"],
     }),
+
     loginUser: builder.mutation({
       query: (credentials) => ({
         url: "/login",
@@ -32,6 +35,47 @@ export const AuthApi = createApi({
       }),
       invalidatesTags: ["User"],
     }),
+
+    getAllUsers: builder.query({
+      query: () => ({
+        url: "/all-users",
+        method: "GET",
+      }),
+      providesTags: ["User"],
+    }),
+
+    verifyUser: builder.query({
+      query: () => ({
+        url: "/verify-user",
+        method: "GET",
+      }),
+    }),
+
+    getProfile: builder.query({
+      query: () => ({
+        url: "/get-profile",
+        method: "GET",
+      }),
+      providesTags: ["Profile"],
+    }),
+
+    updateProfile: builder.mutation({
+      query: (profileData) => ({
+        url: "/update-profile",
+        method: "PUT",
+        body: profileData,
+      }),
+      invalidatesTags: ["Profile"],
+    }),
+
+    deleteProfile: builder.mutation({
+      query: () => ({
+        url: "/delete-profile",
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Profile", "User"],
+    }),
+
     deleteUser: builder.mutation({
       query: (id) => ({
         url: `/delete/${id}`,
@@ -39,13 +83,15 @@ export const AuthApi = createApi({
       }),
       invalidatesTags: ["User"],
     }),
+
     logoutUser: builder.mutation({
       query: () => ({
         url: "/logout",
         method: "POST",
       }),
     }),
-        verifyOtp: builder.mutation({
+
+    verifyOtp: builder.mutation({
       query: (data) => ({
         url: "/verify-otp",
         method: "POST",
@@ -55,11 +101,15 @@ export const AuthApi = createApi({
   }),
 });
 
-// Export hooks
 export const {
   useRegisterUserMutation,
   useLoginUserMutation,
   useDeleteUserMutation,
   useLogoutUserMutation,
   useVerifyOtpMutation,
+  useGetAllUsersQuery,
+  useVerifyUserQuery,
+  useGetProfileQuery,
+  useUpdateProfileMutation,
+  useDeleteProfileMutation,
 } = AuthApi;

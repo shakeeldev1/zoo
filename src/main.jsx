@@ -7,10 +7,16 @@ import App from './App.jsx'
 import { Provider } from 'react-redux'
 import { store } from './redux/Store.js'
 
+// IMPORT YOUR CONTEXT PROVIDER
+import ContextApi from './context/ContextApi.jsx' // Adjust path as needed
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <Provider store={store}>
-      <App />
+      {/* WRAP APP WITH ContextApi */}
+      <ContextApi>
+        <App />
+      </ContextApi>
     </Provider>
   </StrictMode>
 )
